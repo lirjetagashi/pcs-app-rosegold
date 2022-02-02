@@ -1,5 +1,6 @@
 package com.rosegold.pcs.controller;
 
+import com.rosegold.pcs.exception.EntityValidationException;
 import com.rosegold.pcs.payload.ExceptionPayload;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -24,17 +25,26 @@ public class ExceptionController {
         .stream()
         .map(x -> (FieldError) x)
         .map(this::buildValidationExceptionPayload)
-        .collect(Collectors.toMap(ExceptionPayload::getFieldName, Function.identity(), (v1, v2) -> v1));
+        .collect(Collectors.toMap(this::buildKey, Function.identity(), ExceptionPayload::mergeValues));
+  }
+
+  private String buildKey(ExceptionPayload exceptionPayload) {
+    return exceptionPayload.getFieldName().split("\\.")[0];
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ExceptionPayload handleEntityNotFoundException(EntityNotFoundException ex) {
-    ExceptionPayload exceptionPayload = new ExceptionPayload();
-    exceptionPayload.setCode("EntityNotFound");
-    exceptionPayload.setMessage(ex.getMessage());
+    return ExceptionPayload.builder()
+        .code("EntityNotFound")
+        .message(ex.getMessage())
+        .build();
+  }
 
-    return exceptionPayload;
+  @ExceptionHandler(EntityValidationException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public Map<String, ?> handleEntityNotFoundException(EntityValidationException ex) {
+    return Map.of(ex.getExceptionPayload().getFieldName(), ex.getExceptionPayload());
   }
 
   private ExceptionPayload buildValidationExceptionPayload(FieldError fieldError) {

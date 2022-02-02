@@ -1,6 +1,7 @@
 package com.rosegold.pcs.service;
 
 import com.rosegold.pcs.entity.BaseEntity;
+import com.rosegold.pcs.exception.EntityValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,6 +13,7 @@ public abstract class BasicServiceOperations<R extends JpaRepository<E, Long>, E
   protected final R repository;
 
   public E save(E entity) {
+    validateEntity(entity);
     return repository.save(entity);
   }
 
@@ -26,5 +28,7 @@ public abstract class BasicServiceOperations<R extends JpaRepository<E, Long>, E
   public void deleteById(Long id) {
     repository.deleteById(id);
   }
+
+  protected void validateEntity(E entity) throws EntityValidationException {}
 
 }

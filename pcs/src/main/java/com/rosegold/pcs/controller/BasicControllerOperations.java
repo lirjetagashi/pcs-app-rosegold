@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class BasicControllerOperations<S extends BasicServiceOperations<?, E>, E extends BaseEntity> {
 
-  private final S service;
+  protected final S service;
 
   @GetMapping("/{id}")
   public E findById(@PathVariable Long id) {

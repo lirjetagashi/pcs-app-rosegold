@@ -2,7 +2,11 @@ import {ThemeProvider} from "@material-ui/core/styles";
 import createTheme from "@material-ui/core/styles/createTheme";
 import {useState} from "react";
 import DarkMode from "./context/DarkMode";
-import Layout from "./component/layout/Layout";
+import Layout from "./component/Layout";
+import DateFnsUtils from '@date-io/date-fns';
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
+import {QueryClient, QueryClientProvider} from "react-query";
+import UserContext from "./context/UserContext";
 
 const customTheme = {
     palette: {
@@ -17,15 +21,24 @@ const customTheme = {
     }
 }
 
+const queryClient = new QueryClient()
+
 export default function App() {
 
     const [theme, setTheme] = useState(customTheme);
+    const [user, setUser] = useState();
 
     return (
-        <ThemeProvider theme={createTheme(theme)}>
-            <DarkMode.Provider value={{theme, setTheme}}>
-                <Layout/>
-            </DarkMode.Provider>
-        </ThemeProvider>
+        <UserContext.Provider value={{user, setUser}}>
+            <QueryClientProvider client={queryClient}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                    <ThemeProvider theme={createTheme(theme)}>
+                        <DarkMode.Provider value={{theme, setTheme}}>
+                            <Layout/>
+                        </DarkMode.Provider>
+                    </ThemeProvider>
+                </MuiPickersUtilsProvider>
+            </QueryClientProvider>
+        </UserContext.Provider>
     );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,9 +10,14 @@ import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import {Link as RouterLink} from "react-router-dom";
+import {Link as RouterLink, useNavigate} from "react-router-dom";
+import {useMutation, useQuery} from "react-query";
+import {QueryKeys} from "../service/QueryKeys";
+import {UserService} from "../service/UserService";
+import useUser from "../hooks/useUser";
+import ValidTextField from "../component/ValidTextField";
 
 function Copyright() {
     return (
@@ -47,68 +52,94 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const userService = new UserService();
+
 export default function SignInPage() {
     const classes = useStyles();
+    const {setUser} = useUser();
+    const navigate = useNavigate();
+    const [userAccount, setUserAccount] = useState({
+        email: '',
+        password: ''
+    });
+
+    // useMutation when we need to use it for example when clicking a button
+    const {mutate, isLoading, error} = useMutation(QueryKeys.USER_BY_EMAIL(userAccount.email), (user) => userService.logIn(user), {
+        onSuccess: data => {
+            setUser(data)
+            navigate('/home')
+        }
+    });
+
+    function handleLogin() {
+        mutate(userAccount);
+    }
 
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
+            <CssBaseline/>
             <div className={classes.paper}>
                 <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
+                    <LockOutlinedIcon/>
                 </Avatar>
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>
-                <form className={classes.form} noValidate>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Email Address"
-                        name="email"
-                        autoComplete="email"
-                        autoFocus
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                    />
-                    <FormControlLabel
-                        control={<Checkbox value="remember" color="primary" />}
-                        label="Remember me"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                        Sign In
-                    </Button>
-                    <Grid container>
-                        <Grid item xs>
-                            <Link href="#" variant="body2">
-                                Forgot password?
-                            </Link>
-                        </Grid>
-                        <Grid item>
-                            <Link href="#" variant="body2" to="/sign-up" component={RouterLink}>
-                                Don't have an account? Sign Up
-                            </Link>
-                        </Grid>
+                <ValidTextField
+                    variant="standard"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    value={userAccount.email}
+                    onChange={e => setUserAccount(prev => ({...prev, email: e.target.value}))}
+                    autoComplete="email"
+                    autoFocus
+                    error={error?.email}
+                />
+                <ValidTextField
+                    variant="standard"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    value={userAccount.password}
+                    onChange={e => setUserAccount(prev => ({...prev, password: e.target.value}))}
+                    autoComplete="current-password"
+                    error={error?.password}
+                />
+                <FormControlLabel
+                    control={<Checkbox value="remember" color="primary"/>}
+                    label="Remember me"
+                />
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    className={classes.submit}
+                    onClick={handleLogin}
+                    disabled={isLoading}
+                >
+                    Sign In
+                </Button>
+                <Grid container>
+                    <Grid item xs>
+                        <Link href="#" variant="body2">
+                            Forgot password?
+                        </Link>
                     </Grid>
-                </form>
+                    <Grid item>
+                        <Link href="#" variant="body2" to="/sign-up" component={RouterLink}>
+                            Don't have an account? Sign Up
+                        </Link>
+                    </Grid>
+                </Grid>
             </div>
         </Container>
     );
