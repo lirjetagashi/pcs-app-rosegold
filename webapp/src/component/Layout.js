@@ -99,7 +99,7 @@ const footers = [
     },
     {
         title: 'Features',
-        description: ['Cool stuff', 'Random feature', 'Team feature'],
+        description: ['Booking feature', 'Admin feature', 'Team feature'],
     },
 ];
 
@@ -111,9 +111,14 @@ export default function Layout() {
     const {user, setUser} = useUser();
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const navigate = useNavigate();
+    const isAdmin = user && user.role === "ADMIN";
 
-    //console.log("user role: ", user.role);
-    console.log("user: ", user);
+    function handleSignOut() {
+        localStorage.removeItem("user");
+        setUser(null);
+        navigate("/sign-in");
+    }
 
     return (
         <>
@@ -125,7 +130,7 @@ export default function Layout() {
                         RoseGold
                     </Typography>
                     <nav>
-                        { user && user.role === "ADMIN" ?
+                        { isAdmin ?
                             <>
                                 <Link variant="button" color="textPrimary" to="/bookings" component={RouterLink}
                                       className={classes.link}>
@@ -143,7 +148,7 @@ export default function Layout() {
                                       className={classes.link}>
                                     Schedules
                                 </Link>
-                                <Link variant="button" color="textPrimary" to="/employees" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/employee" component={RouterLink}
                                       className={classes.link}>
                                     Employees
                                 </Link>
@@ -197,7 +202,7 @@ export default function Layout() {
                                 open={open}
                                 onClose={() => setAnchorEl(null)}
                             >
-                                <MenuItem onClick={() => setUser(null)}>Sign Out</MenuItem>
+                                <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                             </Menu>
                         </div>
                     }
@@ -207,7 +212,7 @@ export default function Layout() {
                 <Route path="/" exact element={<Navigate replace to={"/home"}/>}/>
                 <Route path="/home" element={<HomePage/>}/>
                 <Route path="/book" element={<BookPage/>}/>
-                <Route path="/employees" element={<EmployeesPage/>}/>
+                <Route path="/employee" element={<EmployeesPage/>}/>
                 <Route path="/skills" element={<SkillsPage/>}/>
                 <Route path="/schedules" element={<SchedulesPage/>}/>
                 <Route path="/services" element={<ServicesPage/>}/>
@@ -215,7 +220,7 @@ export default function Layout() {
                 <Route path="/sign-in" element={<SignInPage/>}/>
                 <Route path="/sign-up" element={<SignUpPage/>}/>
             </Routes>
-            <Container maxWidth="md" component="footer" className={classes.footer}>
+            {!isAdmin && <Container maxWidth="md" component="footer" className={classes.footer}>
                 <Grid container spacing={4} justifyContent="space-evenly">
                     {footers.map((footer) => (
                         <Grid item xs={6} sm={3} key={footer.title}>
@@ -237,7 +242,7 @@ export default function Layout() {
                 <Box mt={5}>
                     <Copyright/>
                 </Box>
-            </Container>
+            </Container>}
         </>
     );
 }

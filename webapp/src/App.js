@@ -1,4 +1,5 @@
 import {ThemeProvider} from "@material-ui/core/styles";
+import { ReactQueryDevtools } from 'react-query/devtools'
 import createTheme from "@material-ui/core/styles/createTheme";
 import {useState} from "react";
 import DarkMode from "./context/DarkMode";
@@ -9,6 +10,18 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import UserContext from "./context/UserContext";
 
 const customTheme = {
+    overrides: {
+        ".MuiTableSortLabel-root.MuiTableSortLabel-active.MuiTableSortLabel-root.MuiTableSortLabel-active .MuiTableSortLabel-icon": {
+            color: "RED !important"
+        },
+        MuiTableSortLabel: {
+            root: {
+                "& > *": {
+                    color: 'BLACK !important',
+                }
+            }
+        },
+    },
     palette: {
         primary: {
             main: '#d274a1',
@@ -35,6 +48,7 @@ export default function App() {
                     <ThemeProvider theme={createTheme(theme)}>
                         <DarkMode.Provider value={{theme, setTheme}}>
                             <Layout/>
+                            <ReactQueryDevtools initialIsOpen={false} />
                         </DarkMode.Provider>
                     </ThemeProvider>
                 </MuiPickersUtilsProvider>

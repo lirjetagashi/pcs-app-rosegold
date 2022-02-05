@@ -1,5 +1,6 @@
 package com.rosegold.pcs.service;
 
+import com.rosegold.pcs.entity.RoleType;
 import com.rosegold.pcs.entity.UserAccount;
 import com.rosegold.pcs.exception.EntityValidationException;
 import com.rosegold.pcs.payload.ExceptionPayload;
@@ -25,6 +26,7 @@ public class UserAccountService extends BasicServiceOperations<UserAccountReposi
   public UserAccount save(UserAccount entity) {
     if (entity.getId() == null) {
       entity.setPassword(passwordEncoder.encode(entity.getPassword()));
+      entity.setRole(RoleType.MEMBER);
     } else {
       UserAccount user = repository.findById(entity.getId())
           .orElseThrow(() -> new EntityNotFoundException("No entity found with id: " + entity.getId()));

@@ -20,6 +20,8 @@ spring:
   jackson:
     default-property-inclusion: non_null
     serialization-inclusion: non_null
+    serialization:
+      write_dates_as_timestamps: false
 
   datasource:
     url: jdbc:postgresql://localhost:5432/pcs_db

@@ -75,6 +75,12 @@ export default function SignInPage() {
         mutate(userAccount);
     }
 
+    function handleKeyPress(event) {
+        if(event.key === 'Enter') {
+            handleLogin();
+        }
+    }
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
@@ -110,6 +116,7 @@ export default function SignInPage() {
                     id="password"
                     value={userAccount.password}
                     onChange={e => setUserAccount(prev => ({...prev, password: e.target.value}))}
+                    onKeyDown={handleKeyPress}
                     autoComplete="current-password"
                     error={error?.password}
                 />

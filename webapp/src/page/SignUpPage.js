@@ -178,7 +178,7 @@ export default function SignUpPage() {
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                        <TextField
+                        <ValidTextField
                             variant="standard"
                             fullWidth
                             id="phoneNumber"
