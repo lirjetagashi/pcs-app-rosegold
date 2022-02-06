@@ -2,7 +2,7 @@ import {EmployeeService} from "../../service/EmployeeService";
 import {useRef} from "react";
 import CustomMaterialTable from "../../component/CustomMaterialTable";
 import {QueryKeys} from "../../service/QueryKeys";
-import {MultipleCheckboxTableCell, TextFieldTableCell} from "../../component/CustomTableCells";
+import {MultipleCheckboxTableCell, TextFieldTableCell} from "../../component/TableCells";
 import {ScheduleService} from "../../service/ScheduleService";
 import {useQuery} from "react-query";
 

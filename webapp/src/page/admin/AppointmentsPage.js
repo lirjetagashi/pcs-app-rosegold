@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function BookingsPage() {
+export default function AppointmentsPage() {
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
@@ -47,7 +47,7 @@ export default function BookingsPage() {
                 onChangeIndex={setValue}
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
-                    Pending
+                    {/*<GridListTiles></GridListTiles>*/}
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
                     In Progress

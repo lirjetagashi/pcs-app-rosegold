@@ -9,7 +9,7 @@ import SkillsPage from "../page/admin/SkillsPage";
 import SchedulesPage from "../page/admin/SchedulesPage";
 import ServicesPage from "../page/client/ServicesPage";
 import ServicesAdminPage from "../page/admin/ServicesAdminPage";
-import BookingsPage from "../page/admin/BookingsPage";
+import AppointmentsPage from "../page/admin/AppointmentsPage";
 
 const AppRoutes = [
     // Client routes
@@ -21,7 +21,7 @@ const AppRoutes = [
     <Route path="/admin/employee" element={<EmployeesPage/>}/>,
     <Route path="/admin/skills" element={<SkillsPage/>}/>,
     <Route path="/admin/schedules" element={<SchedulesPage/>}/>,
-    <Route path="/admin/bookings" element={<BookingsPage/>}/>,
+    <Route path="/admin/appointments" element={<AppointmentsPage/>}/>,
     <Route path="/admin/services" element={<ServicesAdminPage/>}/>,
     // Other routes
     <Route path="/sign-in" element={<SignInPage/>}/>,

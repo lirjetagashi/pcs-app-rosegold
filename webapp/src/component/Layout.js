@@ -124,9 +124,9 @@ export default function Layout() {
                     <nav>
                         { isAdmin ?
                             <>
-                                <Link variant="button" color="textPrimary" to="/admin/bookings" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/admin/appointments" component={RouterLink}
                                       className={classes.link}>
-                                    Bookings
+                                    Appointments
                                 </Link>
                                 <Link variant="button" color="textPrimary" to="/admin/services" component={RouterLink}
                                       className={classes.link}>

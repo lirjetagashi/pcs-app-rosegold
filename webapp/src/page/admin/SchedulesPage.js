@@ -2,7 +2,7 @@ import {useRef} from "react";
 import CustomMaterialTable from "../../component/CustomMaterialTable";
 import {QueryKeys} from "../../service/QueryKeys";
 import {ScheduleService} from "../../service/ScheduleService";
-import {SelectTableCell, TimeTableCell} from "../../component/CustomTableCells";
+import {SelectTableCell, TimeTableCell} from "../../component/TableCells";
 
 const menuItems = [
     {value: "MONDAY", label: "Monday"},
