@@ -89,9 +89,6 @@ export default function SignUpPage() {
         createUser(userAccount);
     }
 
-    console.log("Is loading: ", isLoading);
-    console.log("Error: ", error);
-
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>

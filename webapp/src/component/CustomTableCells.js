@@ -1,5 +1,5 @@
 import ValidTextField from "./ValidTextField";
-import {FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
+import {Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, InputLabel, MenuItem, Select} from "@material-ui/core";
 import {KeyboardTimePicker} from "@material-ui/pickers";
 
 export const TextFieldTableCell = (props, errorRef) =>
@@ -7,7 +7,7 @@ export const TextFieldTableCell = (props, errorRef) =>
                     error={errorRef.current && errorRef.current[props.columnDef.field]}
     />
 
-export const ChoiceBoxTableCell = (props, errorRef, menuItems) => {
+export const SelectTableCell = (props, errorRef, menuItems) => {
 
     const hasError = !!(errorRef.current && errorRef.current[props.columnDef.field])
 
@@ -38,4 +38,33 @@ export const TimeTableCell = (props) => {
         value={value}
         onChange={date => props.onChange(date)}
     />
+}
+
+export const MultipleCheckboxTableCell = (props, allItems, renderLabel) => {
+
+    const values = props.value || [];
+    const valueIds = values.map(x => x.id);
+
+    return (
+        <FormGroup row>
+            {allItems.map(item => (
+                <FormControlLabel
+                    key={item.id}
+                    control={
+                        <Checkbox
+                            key={item.id}
+                            checked={valueIds.includes(item.id)}
+                            onChange={() => {
+                                const newValues = valueIds.includes(item.id) ? values.filter(x => x.id !== item.id) : [...values, item];
+                                props.onChange(newValues);
+                            }}
+                            name={props.columnDef.title}
+                            color="secondary"
+                        />
+                    }
+                    label={renderLabel(item)}
+                />
+            ))}
+        </FormGroup>
+    )
 }

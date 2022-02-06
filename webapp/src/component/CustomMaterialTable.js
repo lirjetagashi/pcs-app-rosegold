@@ -1,37 +1,31 @@
 import {useTheme} from "@material-ui/core";
 import {useMutation, useQuery} from "react-query";
-import MaterialTable from "material-table";
 import Typography from "@material-ui/core/Typography";
+import MaterialTable from "@material-table/core";
 
 export default function CustomMaterialTable({title, queryKey, service, columns, errorRef}) {
 
     const theme = useTheme();
 
     const {isLoading, data, refetch} = useQuery(queryKey, () => service.findAll());
-    const {
-        mutateAsync: create,
-        reset: resetCreateErrors
-    } = useMutation(payload => service.create(payload),
+    const {mutateAsync: createRecord} = useMutation(payload => service.create(payload),
         {
-            onSuccess: refetch,
+            onSuccess: onSuccessReset,
             onError: e => errorRef.current = e
         });
+    const {mutateAsync: updateRecord} = useMutation(payload => service.update(payload),
+        {
+            onSuccess: onSuccessReset,
+            onError: e => errorRef.current = e
+        })
+
+    function onSuccessReset () {
+        refetch();
+        resetErrors();
+    }
 
     function resetErrors() {
         errorRef.current = null;
-        resetCreateErrors()
-    }
-
-    function updateRow(emp) {
-        return service.update(emp)
-            .then(x => {
-                errorRef.current = null;
-                refetch();
-                return x;
-            }).catch(e => {
-                errorRef.current = e;
-                throw e;
-            })
     }
 
     return (
@@ -64,15 +58,15 @@ export default function CustomMaterialTable({title, queryKey, service, columns, 
                 actionsColumnIndex: -1,
                 pageSize: 10,
                 headerStyle: {
+                    fontWeight: "bold",
                     backgroundColor: theme.palette.secondary.main,
-                    color: "black",
                     "&:hover": {}
                 },
                 paginationType: "stepped"
             }}
             editable={{
-                onRowAdd: create,
-                onRowUpdate: updateRow,
+                onRowAdd: createRecord,
+                onRowUpdate: updateRecord,
                 onRowUpdateCancelled: resetErrors,
                 onRowAddCancelled: resetErrors
             }}

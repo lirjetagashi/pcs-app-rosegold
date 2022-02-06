@@ -1,6 +1,6 @@
-import salonImg from "../images/salon-2.jpeg";
+import salonImg from "../../images/salon-2.jpeg";
 import Container from '@material-ui/core/Container';
-import '../app.css';
+import '../../app.css';
 
 export default function HomePage({}) {
 

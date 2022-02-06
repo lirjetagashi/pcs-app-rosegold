@@ -1,8 +1,8 @@
 import {useRef} from "react";
-import CustomMaterialTable from "../component/CustomMaterialTable";
-import {QueryKeys} from "../service/QueryKeys";
-import {ScheduleService} from "../service/ScheduleService";
-import {ChoiceBoxTableCell, TimeTableCell} from "../component/CustomTableCells";
+import CustomMaterialTable from "../../component/CustomMaterialTable";
+import {QueryKeys} from "../../service/QueryKeys";
+import {ScheduleService} from "../../service/ScheduleService";
+import {SelectTableCell, TimeTableCell} from "../../component/CustomTableCells";
 
 const menuItems = [
     {value: "MONDAY", label: "Monday"},
@@ -22,7 +22,7 @@ export default function SchedulesPage({}) {
     const errorRef = useRef();
 
     const columns = [
-        {title: 'Day of week', field: 'dayOfWeek', initialEditValue: "MONDAY", editComponent: props => ChoiceBoxTableCell(props, errorRef, menuItems)},
+        {title: 'Day of week', field: 'dayOfWeek', initialEditValue: "MONDAY", editComponent: props => SelectTableCell(props, errorRef, menuItems)},
         {title: 'Start time', field: 'startTime', initialEditValue: initialStartTime, editComponent: props => TimeTableCell(props, errorRef)},
         {title: 'End time', field: 'endTime', initialEditValue: initialEndTime, editComponent: props => TimeTableCell(props, errorRef)}
     ];

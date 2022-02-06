@@ -10,6 +10,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Set;
 
 import static javax.persistence.FetchType.EAGER;
@@ -27,11 +28,14 @@ public class Employee extends BaseEntity {
 
   private boolean enabled = true;
 
-  @OneToMany(fetch = EAGER, cascade = CascadeType.ALL)
-  private Set<Schedule> schedules;
+  @ManyToMany(fetch = EAGER, cascade = CascadeType.MERGE)
+  @JoinTable(name = "employee_schedules",
+      joinColumns = @JoinColumn(name = "employee_id"),
+      inverseJoinColumns = @JoinColumn(name = "schedules_id"))
+  private List<Schedule> schedules;
 
-  @ManyToMany(fetch = EAGER, cascade = CascadeType.ALL)
-  @JoinTable(name = "employee_skill",
+  @ManyToMany(fetch = EAGER, cascade = CascadeType.MERGE)
+  @JoinTable(name = "employee_skills",
       joinColumns = @JoinColumn(name = "employee_id"),
       inverseJoinColumns = @JoinColumn(name = "skill_id"))
   private Set<Skill> skills;

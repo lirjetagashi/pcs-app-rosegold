@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,22 +8,14 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
-import {Link as RouterLink, Navigate, Route, Routes, useNavigate} from "react-router-dom";
-import HomePage from "../page/HomePage";
-import BookPage from "../page/BookPage";
-import SignInPage from "../page/SignInPage";
-import SignUpPage from "../page/SignUpPage";
+import {Link as RouterLink, Routes, useNavigate} from "react-router-dom";
 import {IconButton, Link, Menu, MenuItem} from "@material-ui/core";
 import useDarkMode from "../hooks/useDarkMode";
 import DarkModeIcon from '@material-ui/icons/Brightness4';
 import LightModeIcon from '@material-ui/icons/Brightness7';
 import useUser from "../hooks/useUser";
 import Avatar from "@material-ui/core/Avatar";
-import EmployeesPage from "../page/EmployeesPage";
-import SkillsPage from "../page/SkillsPage";
-import SchedulesPage from "../page/SchedulesPage";
-import ServicesPage from "../page/ServicesPage";
-import ServicesAdminPage from "../page/ServicesAdminPage";
+import AppRoutes from "../routes/Routes";
 
 function Copyright() {
     return (
@@ -132,23 +124,23 @@ export default function Layout() {
                     <nav>
                         { isAdmin ?
                             <>
-                                <Link variant="button" color="textPrimary" to="/bookings" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/admin/bookings" component={RouterLink}
                                       className={classes.link}>
                                     Bookings
                                 </Link>
-                                <Link variant="button" color="textPrimary" to="/services-admin" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/admin/services" component={RouterLink}
                                       className={classes.link}>
                                     Services
                                 </Link>
-                                <Link variant="button" color="textPrimary" to="/skills" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/admin/skills" component={RouterLink}
                                       className={classes.link}>
                                     Skills
                                 </Link>
-                                <Link variant="button" color="textPrimary" to="/schedules" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/admin/schedules" component={RouterLink}
                                       className={classes.link}>
                                     Schedules
                                 </Link>
-                                <Link variant="button" color="textPrimary" to="/employee" component={RouterLink}
+                                <Link variant="button" color="textPrimary" to="/admin/employee" component={RouterLink}
                                       className={classes.link}>
                                     Employees
                                 </Link>
@@ -209,16 +201,7 @@ export default function Layout() {
                 </Toolbar>
             </AppBar>
             <Routes>
-                <Route path="/" exact element={<Navigate replace to={"/home"}/>}/>
-                <Route path="/home" element={<HomePage/>}/>
-                <Route path="/book" element={<BookPage/>}/>
-                <Route path="/employee" element={<EmployeesPage/>}/>
-                <Route path="/skills" element={<SkillsPage/>}/>
-                <Route path="/schedules" element={<SchedulesPage/>}/>
-                <Route path="/services" element={<ServicesPage/>}/>
-                <Route path="/services-admin" element={<ServicesAdminPage/>}/>
-                <Route path="/sign-in" element={<SignInPage/>}/>
-                <Route path="/sign-up" element={<SignUpPage/>}/>
+                {AppRoutes}
             </Routes>
             {!isAdmin && <Container maxWidth="md" component="footer" className={classes.footer}>
                 <Grid container spacing={4} justifyContent="space-evenly">

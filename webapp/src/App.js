@@ -11,13 +11,18 @@ import UserContext from "./context/UserContext";
 
 const customTheme = {
     overrides: {
-        ".MuiTableSortLabel-root.MuiTableSortLabel-active.MuiTableSortLabel-root.MuiTableSortLabel-active .MuiTableSortLabel-icon": {
-            color: "RED !important"
-        },
         MuiTableSortLabel: {
             root: {
-                "& > *": {
-                    color: 'BLACK !important',
+                color: '#121212',
+                fontSize: "1.1em",
+                '&:hover': {
+                    color: '#424242 !important',
+                },
+                '&.MuiTableSortLabel-active': {
+                    color: "#121212"
+                },
+                "& *": {
+                    color: '#2f2f2f !important',
                 }
             }
         },
@@ -34,7 +39,14 @@ const customTheme = {
     }
 }
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+            retry: (count, error) => error.response?.status !== 401 && error.response?.status !== 403 && count < 3
+        }
+    }
+});
 
 export default function App() {
 

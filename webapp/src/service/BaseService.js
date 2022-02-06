@@ -24,4 +24,8 @@ export class BaseService {
         return axiosInstance.get(`${this.requestMapping}/${id}`);
     }
 
+    delete(id) {
+        return axiosInstance.delete(`${this.requestMapping}/${id}`);
+    }
+
 }

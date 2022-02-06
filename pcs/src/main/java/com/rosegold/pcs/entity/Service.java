@@ -34,4 +34,6 @@ public class Service extends BaseEntity {
       inverseJoinColumns = @JoinColumn(name = "skill_id"))
   private Set<Skill> skills;
 
+  private boolean enabled = true;
+
 }
