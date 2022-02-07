@@ -9,6 +9,9 @@ import AppointmentList from "../../component/AppointmentList";
 import {useQuery} from "react-query";
 import {QueryKeys} from "../../service/QueryKeys";
 import {AppointmentService} from "../../service/AppointmentService";
+import PendingIcon from '@material-ui/icons/PauseCircleOutlineOutlined';
+import InProgressIcon from '@material-ui/icons/HourglassEmptyOutlined';
+import CompletedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 
 function a11yProps(index) {
     return {
@@ -17,25 +20,41 @@ function a11yProps(index) {
     };
 }
 
+function getTabColor(value, theme) {
+    switch (value) {
+        case 0:
+            return {color: theme.palette.primary.main}
+        case 1:
+            return {color: theme.palette.secondary.main}
+        case 2:
+            return {color: theme.palette.success.main}
+        default:
+            throw new Error("Tab color not specified!");
+    }
+}
+
 const useStyles = makeStyles((theme) => ({
     root: {
         backgroundColor: theme.palette.background.paper,
         width: "100%",
     },
+    tabs: {
+        "& *.Mui-selected": {
+            color: props => props.color,
+        }
+    },
+    tabIndicator: {
+        backgroundColor: props => props.color
+    }
 }));
 
 const appointmentService = new AppointmentService();
 
 export default function AppointmentsPage() {
-    const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
     const {data, isLoading} = useQuery(QueryKeys.APPOINTMENTS, () => appointmentService.findAll());
-
-    const appointmentColumns = [
-        {title: "Employee", field: "employee.firstName"},
-        {title: "Service", field: "service.name"}
-    ]
+    const classes = useStyles(getTabColor(value, theme));
 
     function handleAppointmentClick(appointment) {
         console.log("Appointment clicked: ", appointment);
@@ -51,10 +70,12 @@ export default function AppointmentsPage() {
                     textColor="primary"
                     variant="fullWidth"
                     aria-label="full width tabs example"
+                    TabIndicatorProps={{className: classes.tabIndicator}}
+                    className={classes.tabs}
                 >
-                    <Tab label="Pending" {...a11yProps(0)} />
-                    <Tab label="In Progress" {...a11yProps(1)} />
-                    <Tab label="Completed" {...a11yProps(2)} />
+                    <Tab label="Pending" icon={<PendingIcon/>} {...a11yProps(0)} />
+                    <Tab label="In Progress" icon={<InProgressIcon/>} {...a11yProps(1)} className={classes.inProgressTab}/>
+                    <Tab label="Completed" icon={<CompletedIcon/>} {...a11yProps(2)} />
                 </Tabs>
             </AppBar>
             <SwipeableViews

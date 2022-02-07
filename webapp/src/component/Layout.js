@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -101,14 +101,22 @@ export default function Layout() {
     const theme = useTheme();
     const toggleDarkMode = useDarkMode();
     const {user, setUser} = useUser();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
+    const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
     const isAdmin = user && user.role === "ADMIN";
+
+    function handleIconClick(event) {
+        setAnchorEl(event.currentTarget);
+    }
+
+    function handleMenuClose() {
+       setAnchorEl(null)
+    };
 
     function handleSignOut() {
         localStorage.removeItem("user");
         setUser(null);
+        handleMenuClose();
         navigate("/sign-in");
     }
 
@@ -174,7 +182,7 @@ export default function Layout() {
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
-                                onClick={event => setAnchorEl(event.currentTarget)}
+                                onClick={handleIconClick}
                                 color="inherit"
                             >
                                 <Avatar className={classes.smallAvatar}>{user.firstName.charAt(0)}</Avatar>
@@ -191,8 +199,8 @@ export default function Layout() {
                                     vertical: 'top',
                                     horizontal: 'right',
                                 }}
-                                open={open}
-                                onClose={() => setAnchorEl(null)}
+                                open={Boolean(anchorEl)}
+                                onClose={handleMenuClose}
                             >
                                 <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                             </Menu>

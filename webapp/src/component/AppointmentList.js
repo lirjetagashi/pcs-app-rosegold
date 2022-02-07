@@ -19,8 +19,6 @@ export default function AppointmentList({data, loading, onTileClick}) {
 
     const finalData = loading ? new Array(6).fill(undefined) : data || [];
 
-    console.log("FinalData: ", finalData);
-
     return (
         <Grid container justifyContent="center" spacing={2}>
             {finalData.map((appointment, i) => (appointment ?
