@@ -23,8 +23,4 @@ public class AppointmentLine extends BaseEntity {
   @JoinColumn
   private Service service;
 
-  @OneToOne
-  @JoinColumn
-  private UserAccount user;
-
 }

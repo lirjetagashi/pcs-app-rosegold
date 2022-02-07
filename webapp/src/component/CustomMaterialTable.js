@@ -58,9 +58,7 @@ export default function CustomMaterialTable({title, queryKey, service, columns, 
                 actionsColumnIndex: -1,
                 pageSize: 10,
                 headerStyle: {
-                    fontWeight: "bold",
-                    backgroundColor: theme.palette.secondary.main,
-                    "&:hover": {}
+                    backgroundColor: 'transparent'
                 },
                 paginationType: "stepped"
             }}

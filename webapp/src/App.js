@@ -11,6 +11,11 @@ import UserContext from "./context/UserContext";
 
 const customTheme = {
     overrides: {
+        MuiTableRow: {
+            head: {
+                background: 'linear-gradient(90deg, #d274a1 0%, #B76E79 40%, #d79d7a 60%, #ffc400 100%)'
+            }
+        },
         MuiTableSortLabel: {
             root: {
                 color: '#121212',
@@ -34,6 +39,9 @@ const customTheme = {
         },
         secondary: {
             main: '#ffc400',
+        },
+        text: {
+            dark: "#121212"
         },
         type: 'dark'
     }

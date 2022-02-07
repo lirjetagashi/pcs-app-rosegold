@@ -10,6 +10,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -23,12 +25,14 @@ public class Service extends BaseEntity {
   @NotBlank
   private String name;
 
-  @NotBlank
+  @NotNull
   private BigDecimal price;
 
+  @NotNull
+  @Positive
   private Long durationInMinutes;
 
-  @ManyToMany(fetch = EAGER, cascade = CascadeType.ALL)
+  @ManyToMany(fetch = EAGER, cascade = CascadeType.MERGE)
   @JoinTable(name = "service_skill",
       joinColumns = @JoinColumn(name = "service_id"),
       inverseJoinColumns = @JoinColumn(name = "skill_id"))

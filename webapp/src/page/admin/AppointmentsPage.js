@@ -5,6 +5,10 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import TabPanel from "../../component/TabPanel";
+import AppointmentList from "../../component/AppointmentList";
+import {useQuery} from "react-query";
+import {QueryKeys} from "../../service/QueryKeys";
+import {AppointmentService} from "../../service/AppointmentService";
 
 function a11yProps(index) {
     return {
@@ -20,10 +24,22 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const appointmentService = new AppointmentService();
+
 export default function AppointmentsPage() {
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
+    const {data, isLoading} = useQuery(QueryKeys.APPOINTMENTS, () => appointmentService.findAll());
+
+    const appointmentColumns = [
+        {title: "Employee", field: "employee.firstName"},
+        {title: "Service", field: "service.name"}
+    ]
+
+    function handleAppointmentClick(appointment) {
+        console.log("Appointment clicked: ", appointment);
+    }
 
     return (
         <div className={classes.root}>
@@ -47,7 +63,11 @@ export default function AppointmentsPage() {
                 onChangeIndex={setValue}
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
-                    {/*<GridListTiles></GridListTiles>*/}
+                    <AppointmentList
+                        data={data}
+                        loading={isLoading}
+                        onTileClick={handleAppointmentClick}
+                    />
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
                     In Progress

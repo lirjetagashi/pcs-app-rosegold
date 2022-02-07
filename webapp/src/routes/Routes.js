@@ -13,19 +13,19 @@ import AppointmentsPage from "../page/admin/AppointmentsPage";
 
 const AppRoutes = [
     // Client routes
-    <Route path="/" exact element={<Navigate replace to={"/home"}/>}/>,
-    <Route path="/home" element={<HomePage/>}/>,
-    <Route path="/book" element={<BookPage/>}/>,
-    <Route path="/services" element={<ServicesPage/>}/>,
+    <Route key={1} path="/" exact element={<Navigate replace to={"/home"}/>}/>,
+    <Route key={2} path="/home" element={<HomePage/>}/>,
+    <Route key={3} path="/book" element={<BookPage/>}/>,
+    <Route key={4} path="/services" element={<ServicesPage/>}/>,
     // Admin routes
-    <Route path="/admin/employee" element={<EmployeesPage/>}/>,
-    <Route path="/admin/skills" element={<SkillsPage/>}/>,
-    <Route path="/admin/schedules" element={<SchedulesPage/>}/>,
-    <Route path="/admin/appointments" element={<AppointmentsPage/>}/>,
-    <Route path="/admin/services" element={<ServicesAdminPage/>}/>,
+    <Route key={5} path="/admin/employee" element={<EmployeesPage/>}/>,
+    <Route key={6} path="/admin/skills" element={<SkillsPage/>}/>,
+    <Route key={7} path="/admin/schedules" element={<SchedulesPage/>}/>,
+    <Route key={8} path="/admin/appointments" element={<AppointmentsPage/>}/>,
+    <Route key={9} path="/admin/services" element={<ServicesAdminPage/>}/>,
     // Other routes
-    <Route path="/sign-in" element={<SignInPage/>}/>,
-    <Route path="/sign-up" element={<SignUpPage/>}/>
+    <Route key={10} path="/sign-in" element={<SignInPage/>}/>,
+    <Route key={11} path="/sign-up" element={<SignUpPage/>}/>
 ];
 
 export default AppRoutes;

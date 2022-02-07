@@ -6,6 +6,6 @@ public enum StatusType {
 
   IN_PROGRESS,
 
-  DONE
+  COMPLETED
 
 }
