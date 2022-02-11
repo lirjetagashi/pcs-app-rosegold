@@ -4,4 +4,5 @@ export const QueryKeys = {
     SCHEDULES: "SCHEDULES",
     SKILLS: "SKILLS",
     APPOINTMENTS: "APPOINTMENTS",
+    SERVICES: "SERVICES"
 }
