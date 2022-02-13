@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -6,12 +6,18 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import TabPanel from "../../component/TabPanel";
 import AppointmentList from "../../component/AppointmentList";
-import {useQuery} from "react-query";
-import {QueryKeys} from "../../service/QueryKeys";
+import {useMutation} from "react-query";
 import {AppointmentService} from "../../service/AppointmentService";
 import PendingIcon from '@material-ui/icons/PauseCircleOutlineOutlined';
 import InProgressIcon from '@material-ui/icons/HourglassEmptyOutlined';
 import CompletedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
+import Box from "@material-ui/core/Box";
+import {InputAdornment, Paper, TextField} from "@material-ui/core";
+import DateFilter from "../../component/DateFilter";
+import Button from "@material-ui/core/Button";
+import {format} from "date-fns";
+import PersonIcon from '@material-ui/icons/Person';
+import SearchIcon from '@material-ui/icons/Search';
 
 function a11yProps(index) {
     return {
@@ -45,19 +51,58 @@ const useStyles = makeStyles((theme) => ({
     },
     tabIndicator: {
         backgroundColor: props => props.color
+    },
+    swipeableViews: {
+        backgroundColor: theme.palette.background.default
+    },
+    filter: {
+        padding: theme.spacing(2),
+        "& > *": {
+            marginRight: theme.spacing(3)
+        }
+    },
+    searchButton: {
+        marginLeft: "auto"
     }
 }));
 
+const statusByIndex = new Map([[0, "PENDING"], [1, "IN_PROGRESS"], [2, "COMPLETED"]]);
 const appointmentService = new AppointmentService();
 
 export default function AppointmentsPage() {
     const theme = useTheme();
-    const [value, setValue] = React.useState(0);
-    const {data, isLoading} = useQuery(QueryKeys.APPOINTMENTS, () => appointmentService.findAll());
+    const rangeRef = useRef();
+    const [value, setValue] = useState(0);
+    const [user, setUser] = useState('');
+    const {mutate: searchAppointments, data, isLoading} = useMutation(({status, user, from, to}) => appointmentService.findByDateBetweenAndStatusAndUser(status, user, from, to));
+    const {mutate: moveToProgress} = useMutation(appointment => appointmentService.moveToProgress(appointment), {
+        onSuccess: handleSearch
+    });
+    const {mutate: moveToCompleted} = useMutation(appointment => appointmentService.moveToCompleted(appointment), {
+        onSuccess: handleSearch
+    });
     const classes = useStyles(getTabColor(value, theme));
 
-    function handleAppointmentClick(appointment) {
-        console.log("Appointment clicked: ", appointment);
+    useEffect(() => {
+        handleSearch()
+    }, [value]);
+
+    function handleMoveToProgress(appointment) {
+        return moveToProgress(appointment);
+    }
+
+    function handleMoveToCompleted(appointment) {
+        return moveToCompleted(appointment);
+    }
+
+    function handleSearch() {
+        const filters = {
+            status: statusByIndex.get(value),
+            user: user,
+            from: format(rangeRef.current.from, "yyyy-MM-dd'T'HH:mm:ss.SSS"),
+            to: format(rangeRef.current.to, "yyyy-MM-dd'T'HH:mm:ss.SSS")
+        }
+        searchAppointments(filters)
     }
 
     return (
@@ -82,19 +127,78 @@ export default function AppointmentsPage() {
                 axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                 index={value}
                 onChangeIndex={setValue}
+                slideClassName={classes.swipeableViews}
             >
                 <TabPanel value={value} index={0} dir={theme.direction}>
-                    <AppointmentList
-                        data={data}
-                        loading={isLoading}
-                        onTileClick={handleAppointmentClick}
-                    />
+                    <Paper variant="outlined" style={{marginBottom: theme.spacing(2)}}>
+                        <Box display="flex" className={classes.filter} flexWrap="wrap">
+                            <TextField value={user} onChange={(e) => setUser(e.target.value)} label="User" variant="outlined" InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon/>
+                                    </InputAdornment>
+                                ),
+                            }}/>
+                            <DateFilter rangeRef={rangeRef}/>
+                            <Button className={classes.searchButton} variant="outlined" color="primary" onClick={handleSearch}
+                                    startIcon={<SearchIcon/>}>Search</Button>
+                        </Box>
+                    </Paper>
+                    <Paper variant="outlined">
+                        <AppointmentList
+                            data={data}
+                            loading={isLoading}
+                            onMoveClick={handleMoveToProgress}
+                            moveLabel={"In Progress"}
+                        />
+                    </Paper>
                 </TabPanel>
                 <TabPanel value={value} index={1} dir={theme.direction}>
-                    In Progress
+                    <Paper variant="outlined" style={{marginBottom: theme.spacing(2)}}>
+                        <Box display="flex" className={classes.filter} flexWrap="wrap">
+                            <TextField label="User" variant="outlined" InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon/>
+                                    </InputAdornment>
+                                ),
+                            }}/>
+                            <DateFilter rangeRef={rangeRef}/>
+                            <Button className={classes.searchButton} variant="outlined" color="primary" onClick={handleSearch}
+                                    startIcon={<SearchIcon/>}>Search</Button>
+                        </Box>
+                    </Paper>
+                    <Paper variant="outlined">
+                        <AppointmentList
+                            data={data}
+                            loading={isLoading}
+                            onMoveClick={handleMoveToCompleted}
+                            moveLabel={"Completed"}
+                        />
+                    </Paper>
                 </TabPanel>
                 <TabPanel value={value} index={2} dir={theme.direction}>
-                    Completed
+                    <Paper variant="outlined" style={{marginBottom: theme.spacing(2)}}>
+                        <Box display="flex" className={classes.filter} flexWrap="wrap">
+                            <TextField label="User" variant="outlined" InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <PersonIcon/>
+                                    </InputAdornment>
+                                ),
+                            }}/>
+                            <DateFilter rangeRef={rangeRef}/>
+                            <Button className={classes.searchButton} variant="outlined" color="primary" onClick={handleSearch}
+                                    startIcon={<SearchIcon/>}>Search</Button>
+                        </Box>
+                    </Paper>
+                    <Paper variant="outlined">
+                        <AppointmentList
+                            disableMove
+                            data={data}
+                            loading={isLoading}
+                        />
+                    </Paper>
                 </TabPanel>
             </SwipeableViews>
         </div>

@@ -1,5 +1,6 @@
 package com.rosegold.pcs.entity;
 
+import com.rosegold.pcs.validation.group.Create;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,8 +27,8 @@ public class Appointment extends BaseEntity {
   @Enumerated(STRING)
   private StatusType status;
 
-  @Future
   @NotNull
+  @Future(groups = {Create.class})
   private LocalDateTime dateTime;
 
   private LocalDateTime startDateTime;

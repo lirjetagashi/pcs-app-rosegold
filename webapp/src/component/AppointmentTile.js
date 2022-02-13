@@ -1,13 +1,16 @@
 import {Card, CardActionArea, CardContent, IconButton, Zoom} from "@material-ui/core";
 import React, {useState} from "react";
 import Typography from "@material-ui/core/Typography";
-import {makeStyles} from "@material-ui/core/styles";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
 import clsx from "clsx";
 import Box from "@material-ui/core/Box";
 import BasicTable from "./BasicTable";
-import {getTime} from "../utils/Utils";
-import Container from "@material-ui/core/Container";
+import {formatCurrency, getTime} from "../utils/Utils";
 import CloseIcon from '@material-ui/icons/Close';
+import EditIcon from '@material-ui/icons/EditRounded';
+import DeleteIcon from '@material-ui/icons/DeleteRounded';
+import DoneIcon from '@material-ui/icons/DoneOutlineRounded';
+import {format} from "date-fns";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -41,9 +44,14 @@ const useStyles = makeStyles(theme => ({
         height: "100%",
         width: "100%",
         backgroundColor: theme.palette.background.default,
-        opacity: "0.6",
+        opacity: "0.7",
         "& *.MuiIconButton-root": {
             float: "right"
+        },
+        "& > .MuiBox-root": {
+            height: "50%",
+            width: "100%",
+            padding: theme.spacing(0, 6)
         }
     },
     header: {
@@ -77,16 +85,27 @@ const useStyles = makeStyles(theme => ({
     value: {
         marginLeft: theme.spacing(1)
     },
+    tileButton: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center"
+    }
 }));
 
-export default function AppointmentTile({appointment, className, onClick}) {
+export default function AppointmentTile({appointment, className, moveLabel, onMoveClick, disableMove}) {
     const [clicked, setClicked] = useState(false);
+    const theme = useTheme();
     const classes = useStyles({blur: `blur(${clicked ? "4px" : "0px"})`});
 
     const tableColumns = [
         {title: "Service", field: "service.name"},
         {title: "Employee", field: "employee.firstName"},
     ];
+
+    function handleMoveClick() {
+        onMoveClick(appointment);
+        setClicked(false);
+    }
 
     return (
         <Card className={clsx(classes.root, className)}>
@@ -97,7 +116,7 @@ export default function AppointmentTile({appointment, className, onClick}) {
                             {appointment?.user.firstName + " " + appointment?.user.lastName}
                         </Typography>
                         <Typography variant="h5" color="textSecondary" component="h1" style={{color: "darkslategray"}}>
-                            {getTime(appointment?.dateTime)}
+                            {format(new Date(appointment?.dateTime), 'MMM, d - HH:mm')}
                         </Typography>
                     </Box>
                     <Box display="flex" justifyContent="space-between" className={classes.content}>
@@ -116,7 +135,7 @@ export default function AppointmentTile({appointment, className, onClick}) {
                             <Box display="flex" alignItems="baseline" className={classes.total}>
                                 <Typography noWrap variant="h6" component="span">Total:</Typography>
                                 <Typography noWrap className={classes.value} variant="h6" component="span"
-                                            color="textPrimary">{appointment.total}</Typography>
+                                            color="textPrimary">{formatCurrency(appointment.total)}</Typography>
                             </Box>
                         </Box>
                     </Box>
@@ -126,8 +145,28 @@ export default function AppointmentTile({appointment, className, onClick}) {
                 <Zoom in={clicked}>
                     <div className={classes.overlay}>
                         <IconButton aria-label="close" onClick={() => setClicked(false)}>
-                            <CloseIcon fontSize="large" />
+                            <CloseIcon fontSize="large"/>
                         </IconButton>
+                        <Box display="flex" justifyContent="space-around" alignItems="center">
+                            {!disableMove && <div className={classes.tileButton}>
+                                <IconButton aria-label="close" onClick={handleMoveClick} style={{color: theme.palette.success.main}}>
+                                    <DoneIcon fontSize="large"/>
+                                </IconButton>
+                                <Typography align="center" component="p" variant="body1">{moveLabel}</Typography>
+                            </div>}
+                            <div className={classes.tileButton}>
+                                <IconButton aria-label="close" onClick={() => setClicked(false)} style={{color: theme.palette.warning.main}}>
+                                    <EditIcon fontSize="large"/>
+                                </IconButton>
+                                <Typography component="p" variant="body1">Edit</Typography>
+                            </div>
+                            <div className={classes.tileButton}>
+                                <IconButton aria-label="close" onClick={() => setClicked(false)} style={{color: theme.palette.error.main}}>
+                                    <DeleteIcon fontSize="large"/>
+                                </IconButton>
+                                <Typography component="p" variant="body1">Delete</Typography>
+                            </div>
+                        </Box>
                     </div>
                 </Zoom>
             }

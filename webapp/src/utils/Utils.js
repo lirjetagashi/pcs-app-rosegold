@@ -11,3 +11,18 @@ export function getTime(date) {
 
     return new Date(date).toLocaleTimeString().substring(0, 5);
 }
+
+const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+});
+
+export function formatCurrency(value) {
+    if (!value) {
+        return formatter.format(0);
+    }
+
+    return formatter.format(value);
+}
