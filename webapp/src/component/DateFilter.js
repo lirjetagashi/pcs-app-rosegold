@@ -1,4 +1,4 @@
-import {FormControl, InputLabel, MenuItem, Select, TextField} from "@material-ui/core";
+import {MenuItem, TextField} from "@material-ui/core";
 import React, {useState} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import {endOfMonth, endOfQuarter, endOfToday, endOfWeek, startOfMonth, startOfQuarter, startOfToday, startOfWeek} from "date-fns";
@@ -9,13 +9,13 @@ import PropTypes from "prop-types";
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        minWidth: "32em",
+        minWidth: "35em",
     },
     select: {
-        width: 150,
+        width: "10em",
     },
     datePicker: {
-        width: 150
+        width: "10em"
     }
 }));
 

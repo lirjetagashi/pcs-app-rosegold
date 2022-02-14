@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.groups.Default;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME;
 
@@ -29,10 +31,10 @@ public class AppointmentController extends BasicControllerOperations<Appointment
   }
 
   @GetMapping("/all/{status}")
-  public List<Appointment> findByDateTimeBetweenAndStatus(@PathVariable String status,
-                                                          @RequestParam(required = false) String user,
-                                                          @RequestParam @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
-                                                          @RequestParam @DateTimeFormat(iso = DATE_TIME) LocalDateTime to) {
+  public Map<LocalDate, List<Appointment>> findByDateTimeBetweenAndStatus(@PathVariable String status,
+                                                                          @RequestParam(required = false) String user,
+                                                                          @RequestParam @DateTimeFormat(iso = DATE_TIME) LocalDateTime from,
+                                                                          @RequestParam @DateTimeFormat(iso = DATE_TIME) LocalDateTime to) {
     return service.findAllByDateBetweenAndStatus(user, from, to, status);
   }
 

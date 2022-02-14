@@ -31,7 +31,7 @@ export default function CustomMaterialTable({title, queryKey, service, columns, 
     return (
         <MaterialTable
             style={{
-                margin: '2em 8em'
+                margin: '2em'
             }}
             isLoading={isLoading}
             localization={{

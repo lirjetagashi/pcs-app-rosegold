@@ -20,10 +20,11 @@ const useStyles = makeStyles(theme => ({
         border: "1px solid",
         borderRadius: "5px",
         transition: 'transform .2s',
+        backfaceVisibility: "hidden",
         '&:hover': {
             borderWidth: "2px",
             borderColor: theme.palette.primary.main,
-            transform: 'scale(1.05)'
+            transform: 'scale(1.05) translateZ(0)',
         }
     },
     actionArea: {
@@ -116,7 +117,7 @@ export default function AppointmentTile({appointment, className, moveLabel, onMo
                             {appointment?.user.firstName + " " + appointment?.user.lastName}
                         </Typography>
                         <Typography variant="h5" color="textSecondary" component="h1" style={{color: "darkslategray"}}>
-                            {format(new Date(appointment?.dateTime), 'MMM, d - HH:mm')}
+                            {format(new Date(appointment?.dateTime), 'HH:mm')}
                         </Typography>
                     </Box>
                     <Box display="flex" justifyContent="space-between" className={classes.content}>

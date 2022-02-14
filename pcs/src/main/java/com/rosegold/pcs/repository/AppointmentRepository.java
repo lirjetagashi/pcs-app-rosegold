@@ -13,7 +13,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
   @Query(
       "SELECT a FROM Appointment a " +
           "LEFT JOIN a.user u " +
-          "WHERE (?1 = '' OR LOWER(u.firstName) LIKE ?1 OR LOWER(u.lastName) LIKE ?1) " +
+          "WHERE (?1 = '' OR LOWER(u.firstName) LIKE %?1% OR LOWER(u.lastName) LIKE %?1%) " +
           "AND a.dateTime BETWEEN ?2 AND ?3 " +
           "AND a.status = ?4 " +
           "ORDER BY a.dateTime"
