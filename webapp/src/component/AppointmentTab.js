@@ -1,5 +1,5 @@
 import TabPanel from "./TabPanel";
-import {InputAdornment, Paper, TextField} from "@material-ui/core";
+import {CircularProgress, InputAdornment, Paper, TextField} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import PersonIcon from "@material-ui/icons/Person";
 import DateFilter from "./DateFilter";
@@ -9,6 +9,7 @@ import AppointmentList from "./AppointmentList";
 import SimpleBar from "simplebar-react";
 import React from "react";
 import {makeStyles, useTheme} from "@material-ui/core/styles";
+import LoadingButton from "./LoadingButton";
 
 const useStyles = makeStyles((theme) => ({
     filter: {
@@ -22,13 +23,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function AppointmentTab({index, label, value, data, isLoading, handleMove, handleSearch, rangeRef, user, setUser, disableMove = false}) {
+export default function AppointmentTab({index, label, value, data, isLoading, onMoveClick, onEditClick, handleSearch, rangeRef, user, setUser, disableMove = false}) {
 
     const theme = useTheme();
     const classes = useStyles();
 
     return (
-        <SimpleBar style={{ maxHeight: "100%" }} autoHide={false}>
+        <SimpleBar style={{maxHeight: "100%"}} autoHide={false}>
             <TabPanel value={value} index={index} dir={theme.direction}>
                 <Paper variant="outlined" style={{marginBottom: theme.spacing(2)}}>
                     <Box display="flex" className={classes.filter} flexWrap="wrap">
@@ -40,15 +41,24 @@ export default function AppointmentTab({index, label, value, data, isLoading, ha
                             ),
                         }}/>
                         <DateFilter rangeRef={rangeRef}/>
-                        <Button className={classes.searchButton} variant="outlined" color="primary" onClick={handleSearch}
-                                startIcon={<SearchIcon/>}>Search</Button>
+                        <LoadingButton
+                            loading={isLoading}
+                            variant="outlined"
+                            color="primary"
+                            onClick={handleSearch}
+                            icon={<SearchIcon/>}
+                            className={classes.searchButton}
+                        >
+                            Search
+                        </LoadingButton>
                     </Box>
                 </Paper>
                 <Paper variant="outlined">
                     <AppointmentList
                         data={data}
                         loading={isLoading}
-                        onMoveClick={handleMove}
+                        onMoveClick={onMoveClick}
+                        onEditClick={onEditClick}
                         moveLabel={label}
                         disableMove={disableMove}
                     />

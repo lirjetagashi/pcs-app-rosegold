@@ -93,7 +93,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function AppointmentTile({appointment, className, moveLabel, onMoveClick, disableMove}) {
+export default function AppointmentTile({appointment, className, moveLabel, onMoveClick, onEditClick, disableMove}) {
     const [clicked, setClicked] = useState(false);
     const theme = useTheme();
     const classes = useStyles({blur: `blur(${clicked ? "4px" : "0px"})`});
@@ -105,6 +105,11 @@ export default function AppointmentTile({appointment, className, moveLabel, onMo
 
     function handleMoveClick() {
         onMoveClick(appointment);
+        setClicked(false);
+    }
+
+    function handleEditClick() {
+        onEditClick(appointment);
         setClicked(false);
     }
 
@@ -156,7 +161,7 @@ export default function AppointmentTile({appointment, className, moveLabel, onMo
                                 <Typography align="center" component="p" variant="body1">{moveLabel}</Typography>
                             </div>}
                             <div className={classes.tileButton}>
-                                <IconButton aria-label="close" onClick={() => setClicked(false)} style={{color: theme.palette.warning.main}}>
+                                <IconButton aria-label="close" onClick={handleEditClick} style={{color: theme.palette.warning.main}}>
                                     <EditIcon fontSize="large"/>
                                 </IconButton>
                                 <Typography component="p" variant="body1">Edit</Typography>

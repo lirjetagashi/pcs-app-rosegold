@@ -1,6 +1,8 @@
 import ValidTextField from "./ValidTextField";
 import {Checkbox, FormControl, FormControlLabel, FormGroup, FormHelperText, InputLabel, MenuItem, Select} from "@material-ui/core";
 import {KeyboardTimePicker} from "@material-ui/pickers";
+import {isValid} from "date-fns";
+import {useState} from "react";
 
 export const TextFieldTableCell = (props, errorRef) =>
     <ValidTextField fullWidth label={props.columnDef.title} value={props.value} onChange={e => props.onChange(e.target.value)}
@@ -26,17 +28,32 @@ export const SelectTableCell = (props, errorRef, menuItems) => {
     </FormControl>
 }
 
-export const TimeTableCell = (props) => {
-    const value = typeof props.value === "string" ?
-        new Date("01/01/1970 " + props.value) : props.value;
+export const TimeTableCell = (props, errorRef) => {
+    const value = typeof props.value === "string" ? new Date("01/01/1970 " + props.value) : props.value;
+    const [dateFormatError, setDateFormatError] = useState("");
+
+    function handleDateChange(value) {
+        if (!isValid(value)) {
+            setDateFormatError("Invalid date")
+        } else {
+            setDateFormatError("")
+        }
+
+        props.onChange(value);
+    }
+
+    const error = errorRef.current && errorRef.current[props.columnDef.field];
 
     return <KeyboardTimePicker
         label={props.columnDef.title}
         placeholder="08:00 AM"
+        required
         minutesStep={5}
         mask="__:__ _M"
         value={value}
-        onChange={date => props.onChange(date)}
+        onChange={handleDateChange}
+        error={!!error || !!dateFormatError}
+        helperText={error?.message || dateFormatError}
     />
 }
 

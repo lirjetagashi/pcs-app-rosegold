@@ -28,10 +28,6 @@ public class ExceptionController {
         .collect(Collectors.toMap(this::buildKey, Function.identity(), ExceptionPayload::mergeValues));
   }
 
-  private String buildKey(ExceptionPayload exceptionPayload) {
-    return exceptionPayload.getFieldName().split("\\.")[0];
-  }
-
   @ExceptionHandler(EntityNotFoundException.class)
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ExceptionPayload handleEntityNotFoundException(EntityNotFoundException ex) {
@@ -45,6 +41,10 @@ public class ExceptionController {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public Map<String, ?> handleEntityNotFoundException(EntityValidationException ex) {
     return Map.of(ex.getExceptionPayload().getFieldName(), ex.getExceptionPayload());
+  }
+
+  private String buildKey(ExceptionPayload exceptionPayload) {
+    return exceptionPayload.getFieldName().split("\\.")[0];
   }
 
   private ExceptionPayload buildValidationExceptionPayload(FieldError fieldError) {

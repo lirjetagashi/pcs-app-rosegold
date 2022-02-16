@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function AppointmentList({data, loading, moveLabel, onMoveClick, disableMove}) {
+export default function AppointmentList({data, loading, moveLabel, onMoveClick, onEditClick, disableMove}) {
 
     const minHeight = useAppBarHeight();
     const classes = useStyles({appBarHeight: minHeight});
@@ -42,11 +42,16 @@ export default function AppointmentList({data, loading, moveLabel, onMoveClick, 
                 <>
                     <Grid key={date + i} item xs={12}>
                         {i > 0 && <Divider/>}
-                        {date === 'null' ? <Skeleton width="5%"/> : <Typography className={classes.dateTypography} variant="h6" component="span" >{format(parseISO(date), "MMM d")}</Typography>}
+                        {date === 'null' ? <Skeleton width="5%"/> :
+                            <Typography className={classes.dateTypography} variant="h6" component="span">{format(parseISO(date), "MMM d")}</Typography>}
                     </Grid>
                     {appointments.map((appointment, i) => (appointment ?
                             <Grid key={i} item>
-                                <AppointmentTile className={classes.tile} appointment={appointment} moveLabel={moveLabel} onMoveClick={onMoveClick}
+                                <AppointmentTile className={classes.tile}
+                                                 appointment={appointment}
+                                                 moveLabel={moveLabel}
+                                                 onMoveClick={onMoveClick}
+                                                 onEditClick={onEditClick}
                                                  disableMove={disableMove}/>
                             </Grid>
                             :
