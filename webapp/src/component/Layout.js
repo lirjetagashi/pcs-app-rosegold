@@ -142,7 +142,7 @@ export default function Layout() {
                                 </Link>
                                 <Link variant="button" color="textPrimary" to="/admin/skills" component={RouterLink}
                                       className={classes.link}>
-                                    Skills
+                                    Categories
                                 </Link>
                                 <Link variant="button" color="textPrimary" to="/admin/schedules" component={RouterLink}
                                       className={classes.link}>

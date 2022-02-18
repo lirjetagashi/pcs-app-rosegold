@@ -1,12 +1,12 @@
 import CustomMaterialTable from "../../component/CustomMaterialTable";
 import {QueryKeys} from "../../service/QueryKeys";
-import {SkillService} from "../../service/SkillService";
+import {CategoryService} from "../../service/CategoryService";
 import {useRef} from "react";
 import {MultipleCheckboxTableCell, TextFieldTableCell} from "../../component/TableCells";
 
-const skillService = new SkillService();
+const categoryService = new CategoryService();
 
-export default function SkillsPage({}) {
+export default function CategoriesPage({}) {
 
     const errorRef = useRef();
 
@@ -16,10 +16,10 @@ export default function SkillsPage({}) {
 
     return (
         <CustomMaterialTable
-            title="Manage Skills"
+            title="Manage Categories"
             columns={columns}
-            service={skillService}
-            queryKey={QueryKeys.SKILLS}
+            service={categoryService}
+            queryKey={QueryKeys.CATEGORIES}
             errorRef={errorRef}
         />
     );
