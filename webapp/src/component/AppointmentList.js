@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function AppointmentList({data, loading, moveLabel, onMoveClick, onEditClick, disableMove}) {
+export default function AppointmentList({data, loading, moveLabel, onMoveClick, onEditClick, onDeleteClick, disableMove}) {
 
     const minHeight = useAppBarHeight();
     const classes = useStyles({appBarHeight: minHeight});
@@ -52,6 +52,7 @@ export default function AppointmentList({data, loading, moveLabel, onMoveClick, 
                                                  moveLabel={moveLabel}
                                                  onMoveClick={onMoveClick}
                                                  onEditClick={onEditClick}
+                                                 onDeleteClick={onDeleteClick}
                                                  disableMove={disableMove}/>
                             </Grid>
                             :

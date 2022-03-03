@@ -19,10 +19,18 @@ const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: 2
 });
 
+export function getCurrency() {
+    return formatter.format(0).split("0")[0];
+}
+
 export function formatCurrency(value) {
     if (!value) {
         return formatter.format(0);
     }
 
     return formatter.format(value);
+}
+
+export function formatName(firstName, lastName) {
+    return `${firstName} ${lastName?.charAt(0)}.`
 }

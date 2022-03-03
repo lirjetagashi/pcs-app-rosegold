@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Set;
@@ -35,9 +34,9 @@ public class Employee extends BaseEntity {
   private List<Schedule> schedules;
 
   @ManyToMany(fetch = EAGER, cascade = CascadeType.MERGE)
-  @JoinTable(name = "employee_skills",
+  @JoinTable(name = "employee_categories",
       joinColumns = @JoinColumn(name = "employee_id"),
-      inverseJoinColumns = @JoinColumn(name = "skill_id"))
-  private Set<Skill> skills;
+      inverseJoinColumns = @JoinColumn(name = "categories_id"))
+  private Set<Category> categories;
 
 }

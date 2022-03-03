@@ -5,17 +5,17 @@ import {QueryKeys} from "../../service/QueryKeys";
 import {MultipleCheckboxTableCell, TextFieldTableCell} from "../../component/TableCells";
 import {ScheduleService} from "../../service/ScheduleService";
 import {useQuery} from "react-query";
-import {SkillService} from "../../service/SkillService";
+import {CategoryService} from "../../service/CategoryService";
 
 const employeeService = new EmployeeService();
 const scheduleService = new ScheduleService();
-const skillService = new SkillService();
+const categoryService = new CategoryService();
 
 export default function EmployeesPage() {
 
     const errorRef = useRef();
     const {data: allSchedules} = useQuery(QueryKeys.SCHEDULES, () => scheduleService.findAll());
-    const {data: allSkills} = useQuery(QueryKeys.SKILLS, () => skillService.findAll());
+    const {data: allCategories} = useQuery(QueryKeys.CATEGORIES, () => categoryService.findAll());
 
     const columns = [
         {title: 'First Name', field: 'firstName', editComponent: props => TextFieldTableCell(props, errorRef)},
@@ -27,12 +27,12 @@ export default function EmployeesPage() {
             editComponent: props => MultipleCheckboxTableCell(props, allSchedules, item => `${item.dayOfWeek} (${item.startTime} - ${item.endTime})`)
         },
         {
-            title: 'Skills',
-            field: 'skills',
-            render: rowData => rowData.skills?.map(x => x.name).join(", "),
-            editComponent: props => MultipleCheckboxTableCell(props, allSkills, item => item.name)
+            title: 'Categories',
+            field: 'categories',
+            render: rowData => rowData.categories?.map(x => x.name).join(", "),
+            editComponent: props => MultipleCheckboxTableCell(props, allCategories, item => item.name)
         },
-        {title: 'Enabled', type: 'boolean', field: 'enabled', initialEditValue: true}
+        {title: 'Active', type: 'boolean', field: 'enabled', initialEditValue: true}
     ];
 
     return (

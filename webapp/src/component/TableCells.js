@@ -4,28 +4,32 @@ import {KeyboardTimePicker} from "@material-ui/pickers";
 import {isValid} from "date-fns";
 import {useState} from "react";
 
-export const TextFieldTableCell = (props, errorRef) =>
-    <ValidTextField fullWidth label={props.columnDef.title} value={props.value} onChange={e => props.onChange(e.target.value)}
+export const TextFieldTableCell = (props, errorRef, type, textFieldProps = {}) =>
+    <ValidTextField {...textFieldProps}
+                    type={type}
+                    fullWidth
+                    label={props.columnDef.title}
+                    value={props.value || (type === "number" ? 0 : '')}
+                    onChange={e => props.onChange(e.target.value)}
                     error={errorRef.current && errorRef.current[props.columnDef.field]}
     />
 
-export const SelectTableCell = (props, errorRef, menuItems) => {
+export const SelectTableCell = (props, errorRef, menuItems, equalOn) => {
 
-    const hasError = !!(errorRef.current && errorRef.current[props.columnDef.field])
+    const value = equalOn && props.value ? menuItems.map(x => x.value).find(x => x[equalOn] === props.value[equalOn]) : props.value
 
-    return <FormControl fullWidth variant="standard" sx={{m: 1, minWidth: 120}} error={hasError}>
-        <InputLabel id="select-standard-label">{props.columnDef.title}</InputLabel>
-        <Select
-            labelId="demo-simple-select-standard-label"
-            id="demo-simple-select-standard"
-            value={props.value}
-            onChange={e => props.onChange(e.target.value)}
-            label={props.columnDef.title}
-        >
-            {menuItems.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}
-        </Select>
-        <FormHelperText>{errorRef.current && errorRef.current[props.columnDef.field]?.message}</FormHelperText>
-    </FormControl>
+    return <ValidTextField
+        select
+        id="select"
+        fullWidth
+        sx={{m: 1, minWidth: 120}}
+        error={errorRef.current && errorRef.current[props.columnDef.field]}
+        value={value || {}}
+        onChange={e => props.onChange(e.target.value)}
+        label={props.columnDef.title}
+    >
+        {menuItems.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}
+    </ValidTextField>
 }
 
 export const TimeTableCell = (props, errorRef) => {

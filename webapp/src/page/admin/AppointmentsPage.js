@@ -13,6 +13,7 @@ import {format} from "date-fns";
 import AppointmentTab from "../../component/AppointmentTab";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery} from "@material-ui/core";
 import Button from "@material-ui/core/Button";
+import AppointmentEditDialog from "../../component/AppointmentEditDialog";
 
 function a11yProps(index) {
     return {
@@ -77,10 +78,10 @@ const appointmentService = new AppointmentService();
 export default function AppointmentsPage() {
     const theme = useTheme();
     const rangeRef = useRef();
+    const [appointment, setAppointment] = useState({});
     const [openEdit, setOpenEdit] = useState(false);
     const [value, setValue] = useState(0);
     const [user, setUser] = useState('');
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const {mutate: searchAppointments, data, isLoading} = useMutation(({
                                                                            status,
                                                                            user,
@@ -91,6 +92,9 @@ export default function AppointmentsPage() {
         onSuccess: handleSearch
     });
     const {mutate: moveToCompleted} = useMutation(appointment => appointmentService.moveToCompleted(appointment), {
+        onSuccess: handleSearch
+    });
+    const {mutate: deleteAppointment} = useMutation(id => appointmentService.delete(id), {
         onSuccess: handleSearch
     });
     const classes = useStyles(getTabColor(value, theme));
@@ -118,7 +122,13 @@ export default function AppointmentsPage() {
     }
 
     function handleEditClick(appointment) {
+        setAppointment(appointment);
         setOpenEdit(true);
+    }
+
+    function handleDeleteClick(appointment) {
+        console.log("Deleting appointment: ", appointment);
+        deleteAppointment(appointment.id)
     }
 
     return (
@@ -155,6 +165,7 @@ export default function AppointmentsPage() {
                                 isLoading={isLoading}
                                 onMoveClick={handleMoveToProgress}
                                 onEditClick={handleEditClick}
+                                onDeleteClick={handleDeleteClick}
                                 handleSearch={handleSearch}
                 />
                 <AppointmentTab index={1}
@@ -166,6 +177,8 @@ export default function AppointmentsPage() {
                                 setUser={setUser}
                                 isLoading={isLoading}
                                 onMoveClick={handleMoveToCompleted}
+                                onEditClick={handleEditClick}
+                                onDeleteClick={handleDeleteClick}
                                 handleSearch={handleSearch}
                 />
                 <AppointmentTab index={2}
@@ -177,30 +190,11 @@ export default function AppointmentsPage() {
                                 setUser={setUser}
                                 isLoading={isLoading}
                                 handleSearch={handleSearch}
+                                onEditClick={handleEditClick}
+                                onDeleteClick={handleDeleteClick}
                 />
             </SwipeableViews>
-            <Dialog
-                fullScreen={fullScreen}
-                open={openEdit}
-                onClose={() => setOpenEdit(false)}
-                aria-labelledby="responsive-dialog-title"
-            >
-                <DialogTitle id="responsive-dialog-title">{"Use Google's location service?"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Let Google help apps determine location. This means sending anonymous location data to
-                        Google, even when no apps are running.
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button autoFocus onClick={() => setOpenEdit(false)} color="primary">
-                        Disagree
-                    </Button>
-                    <Button onClick={() => setOpenEdit(false)} color="primary" autoFocus>
-                        Agree
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            {openEdit && <AppointmentEditDialog appointment={appointment} setAppointment={setAppointment} open={openEdit} setOpen={setOpenEdit} refetch={handleSearch} />}
         </div>
     );
 }

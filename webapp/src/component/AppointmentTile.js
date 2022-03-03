@@ -93,13 +93,14 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function AppointmentTile({appointment, className, moveLabel, onMoveClick, onEditClick, disableMove}) {
+export default function AppointmentTile({appointment, className, moveLabel, onMoveClick, onEditClick, onDeleteClick, disableMove}) {
     const [clicked, setClicked] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     const theme = useTheme();
     const classes = useStyles({blur: `blur(${clicked ? "4px" : "0px"})`});
 
     const tableColumns = [
-        {title: "Service", field: "service.name"},
+        {title: "Service", field: "service", renderValue: row => `${row.category.name} - ${row.name}`},
         {title: "Employee", field: "employee.firstName"},
     ];
 
@@ -111,6 +112,17 @@ export default function AppointmentTile({appointment, className, moveLabel, onMo
     function handleEditClick() {
         onEditClick(appointment);
         setClicked(false);
+    }
+
+    function handleDeletingReject() {
+        setClicked(false);
+        setDeleting(false);
+    }
+
+    function handleDeletingAccept() {
+        onDeleteClick(appointment);
+        setClicked(false);
+        setDeleting(false);
     }
 
     return (
@@ -150,29 +162,51 @@ export default function AppointmentTile({appointment, className, moveLabel, onMo
             {clicked &&
                 <Zoom in={clicked}>
                     <div className={classes.overlay}>
-                        <IconButton aria-label="close" onClick={() => setClicked(false)}>
-                            <CloseIcon fontSize="large"/>
-                        </IconButton>
-                        <Box display="flex" justifyContent="space-around" alignItems="center">
-                            {!disableMove && <div className={classes.tileButton}>
-                                <IconButton aria-label="close" onClick={handleMoveClick} style={{color: theme.palette.success.main}}>
-                                    <DoneIcon fontSize="large"/>
+                        {deleting ?
+                            <>
+                                <Typography variant="h6" component="h6" align="center" style={{marginTop: theme.spacing(2)}}>Are you sure you want to delete<br/>this appointment?</Typography>
+                                <Box display="flex" justifyContent="space-around" alignItems="center">
+                                    <div className={classes.tileButton}>
+                                        <IconButton aria-label="close" onClick={handleDeletingAccept} style={{color: theme.palette.success.main}}>
+                                            <DoneIcon fontSize="large"/>
+                                        </IconButton>
+                                        <Typography component="p" variant="body1">Yes</Typography>
+                                    </div>
+                                    <div className={classes.tileButton}>
+                                        <IconButton aria-label="close" onClick={handleDeletingReject} style={{color: theme.palette.error.main}}>
+                                            <CloseIcon fontSize="large"/>
+                                        </IconButton>
+                                        <Typography component="p" variant="body1">No</Typography>
+                                    </div>
+                                </Box>
+                            </>
+                            :
+                            <>
+                                <IconButton aria-label="close" onClick={() => setClicked(false)}>
+                                    <CloseIcon fontSize="large"/>
                                 </IconButton>
-                                <Typography align="center" component="p" variant="body1">{moveLabel}</Typography>
-                            </div>}
-                            <div className={classes.tileButton}>
-                                <IconButton aria-label="close" onClick={handleEditClick} style={{color: theme.palette.warning.main}}>
-                                    <EditIcon fontSize="large"/>
-                                </IconButton>
-                                <Typography component="p" variant="body1">Edit</Typography>
-                            </div>
-                            <div className={classes.tileButton}>
-                                <IconButton aria-label="close" onClick={() => setClicked(false)} style={{color: theme.palette.error.main}}>
-                                    <DeleteIcon fontSize="large"/>
-                                </IconButton>
-                                <Typography component="p" variant="body1">Delete</Typography>
-                            </div>
-                        </Box>
+                                <Box display="flex" justifyContent="space-around" alignItems="center">
+                                    {!disableMove && <div className={classes.tileButton}>
+                                        <IconButton aria-label="close" onClick={handleMoveClick} style={{color: theme.palette.success.main}}>
+                                            <DoneIcon fontSize="large"/>
+                                        </IconButton>
+                                        <Typography align="center" component="p" variant="body1">{moveLabel}</Typography>
+                                    </div>}
+                                    <div className={classes.tileButton}>
+                                        <IconButton aria-label="close" onClick={handleEditClick} style={{color: theme.palette.warning.main}}>
+                                            <EditIcon fontSize="large"/>
+                                        </IconButton>
+                                        <Typography component="p" variant="body1">Edit</Typography>
+                                    </div>
+                                    <div className={classes.tileButton}>
+                                        <IconButton aria-label="close" onClick={() => setDeleting(true)} style={{color: theme.palette.error.main}}>
+                                            <DeleteIcon fontSize="large"/>
+                                        </IconButton>
+                                        <Typography component="p" variant="body1">Delete</Typography>
+                                    </div>
+                                </Box>
+                            </>
+                        }
                     </div>
                 </Zoom>
             }

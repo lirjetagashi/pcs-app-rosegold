@@ -5,7 +5,7 @@ import React from "react";
 import HomePage from "../page/client/HomePage";
 import BookPage from "../page/client/BookPage";
 import EmployeesPage from "../page/admin/EmployeesPage";
-import SkillsPage from "../page/admin/SkillsPage";
+import CategoriesPage from "../page/admin/CategoriesPage";
 import SchedulesPage from "../page/admin/SchedulesPage";
 import ServicesPage from "../page/client/ServicesPage";
 import ServicesAdminPage from "../page/admin/ServicesAdminPage";
@@ -19,7 +19,7 @@ const AppRoutes = [
     <Route key={4} path="/services" element={<ServicesPage/>}/>,
     // Admin routes
     <Route key={5} path="/admin/employee" element={<EmployeesPage/>}/>,
-    <Route key={6} path="/admin/skills" element={<SkillsPage/>}/>,
+    <Route key={6} path="/admin/categories" element={<CategoriesPage/>}/>,
     <Route key={7} path="/admin/schedules" element={<SchedulesPage/>}/>,
     <Route key={8} path="/admin/appointments" element={<AppointmentsPage/>}/>,
     <Route key={9} path="/admin/services" element={<ServicesAdminPage/>}/>,

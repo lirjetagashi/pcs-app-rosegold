@@ -28,4 +28,12 @@ export class BaseService {
         return axiosInstance.delete(`${this.requestMapping}/${id}`);
     }
 
+    validateOnCreate(data) {
+        return axiosInstance.post(`${this.requestMapping}/validate`, data);
+    }
+
+    validateOnUpdate(data) {
+        return axiosInstance.put(`${this.requestMapping}/validate`, data);
+    }
+
 }

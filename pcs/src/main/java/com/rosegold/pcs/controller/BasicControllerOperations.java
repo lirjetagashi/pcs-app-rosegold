@@ -41,6 +41,12 @@ public abstract class BasicControllerOperations<S extends BasicServiceOperations
     return service.save(entity);
   }
 
+  @PostMapping("/validate")
+  public void validateOnCreate(@RequestBody @Validated({Default.class, Create.class}) E entity) {}
+
+  @PutMapping("/validate")
+  public void validateOnUpdate(@RequestBody @Validated({Default.class, Update.class}) E entity) {}
+
   @DeleteMapping("/{id}")
   public void deleteById(@PathVariable Long id) {
     service.deleteById(id);

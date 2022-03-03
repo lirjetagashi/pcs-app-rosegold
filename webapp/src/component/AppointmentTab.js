@@ -1,9 +1,8 @@
 import TabPanel from "./TabPanel";
-import {CircularProgress, InputAdornment, Paper, TextField} from "@material-ui/core";
+import {InputAdornment, Paper, TextField} from "@material-ui/core";
 import Box from "@material-ui/core/Box";
 import PersonIcon from "@material-ui/icons/Person";
 import DateFilter from "./DateFilter";
-import Button from "@material-ui/core/Button";
 import SearchIcon from "@material-ui/icons/Search";
 import AppointmentList from "./AppointmentList";
 import SimpleBar from "simplebar-react";
@@ -23,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function AppointmentTab({index, label, value, data, isLoading, onMoveClick, onEditClick, handleSearch, rangeRef, user, setUser, disableMove = false}) {
+export default function AppointmentTab({index, label, value, data, isLoading, onMoveClick, onEditClick, onDeleteClick, handleSearch, rangeRef, user, setUser, disableMove = false}) {
 
     const theme = useTheme();
     const classes = useStyles();
@@ -59,6 +58,7 @@ export default function AppointmentTab({index, label, value, data, isLoading, on
                         loading={isLoading}
                         onMoveClick={onMoveClick}
                         onEditClick={onEditClick}
+                        onDeleteClick={onDeleteClick}
                         moveLabel={label}
                         disableMove={disableMove}
                     />

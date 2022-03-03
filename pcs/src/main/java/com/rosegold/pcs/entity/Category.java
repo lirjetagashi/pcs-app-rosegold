@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
-public class Skill extends BaseEntity {
+public class Category extends BaseEntity {
 
   @NotBlank
   private String name;
