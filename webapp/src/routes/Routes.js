@@ -3,7 +3,7 @@ import SignInPage from "../page/SignInPage";
 import SignUpPage from "../page/SignUpPage";
 import React from "react";
 import HomePage from "../page/client/HomePage";
-import BookPage from "../page/client/BookPage";
+import BookPage from "../page/client/book/BookPage";
 import EmployeesPage from "../page/admin/EmployeesPage";
 import CategoriesPage from "../page/admin/CategoriesPage";
 import SchedulesPage from "../page/admin/SchedulesPage";

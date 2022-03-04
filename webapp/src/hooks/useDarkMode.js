@@ -5,14 +5,29 @@ export default function useDarkMode() {
 
     const {theme, setTheme} = useContext(DarkMode);
     const type = theme.palette?.type;
-
-    return () => {
-        setTheme({
+    const newTheme = type === 'light' ?
+        ({
             ...theme,
             palette: {
                 ...theme.palette,
-                type: type === 'light' ? 'dark' : 'light'
+                secondary: {
+                    main: '#ffc400',
+                },
+                type: 'dark'
             }
         })
+        :
+        ({
+            ...theme,
+            palette: {
+                ...theme.palette,
+                secondary: {
+                    main: "#ff9900",
+                },
+                type: 'light'
+            }
+        })
+    return () => {
+        setTheme(newTheme)
     }
 };

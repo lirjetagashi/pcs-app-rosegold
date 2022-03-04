@@ -211,7 +211,7 @@ export default function Layout() {
             <Routes>
                 {AppRoutes}
             </Routes>
-            {!isAdmin && <Container maxWidth="md" component="footer" className={classes.footer}>
+            {/*{!isAdmin && <Container maxWidth="md" component="footer" className={classes.footer}>
                 <Grid container spacing={4} justifyContent="space-evenly">
                     {footers.map((footer) => (
                         <Grid item xs={6} sm={3} key={footer.title}>
@@ -233,7 +233,7 @@ export default function Layout() {
                 <Box mt={5}>
                     <Copyright/>
                 </Box>
-            </Container>}
+            </Container>}*/}
         </>
     );
 }
