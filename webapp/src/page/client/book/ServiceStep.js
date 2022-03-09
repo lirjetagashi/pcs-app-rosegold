@@ -1,29 +1,29 @@
 import React, {useState} from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
 import ServiceTile from "./ServiceTile";
+import {CategoryService} from "../../../service/CategoryService";
+import {useQuery} from "react-query";
+import {QueryKeys} from "../../../service/QueryKeys";
+import Grid from "@material-ui/core/Grid";
 
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`vertical-tabpanel-${index}`}
-            aria-labelledby={`vertical-tab-${index}`}
-            {...other}
+        <Grid container
+              spacing={2}
+              role="tabpanel"
+              hidden={value !== index}
+              id={`vertical-tabpanel-${index}`}
+              aria-labelledby={`vertical-tab-${index}`}
+              style={{margin: 0, width: "100%"}}
+              {...other}
         >
-            {value === index && (
-                <Box p={3}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
+            {value === index && children}
+        </Grid>
     );
 }
 
@@ -42,26 +42,32 @@ function a11yProps(index) {
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
         height: "100%",
     },
     tabs: {
+        flexGrow: 0,
+        flexShrink: 0,
         borderRight: `1px solid ${theme.palette.divider}`,
     },
     tabPanel: {
-        backgroundColor: theme.palette.background.default
+        flexGrow: 1,
+        margin: theme.spacing(1)
     }
 }));
 
-export default function ServiceStep() {
+const categoryService = new CategoryService();
+
+export default function ServiceStep({onAdd, selectedServices}) {
     const classes = useStyles();
     const [value, setValue] = useState(0);
 
-    const handleChange = (event, newValue) => {
+    const {data} = useQuery(QueryKeys.CATEGORIES, () => categoryService.findAll())
+
+    function handleChange(event, newValue) {
         setValue(newValue);
-    };
+    }
 
     return (
         <div className={classes.root}>
@@ -73,35 +79,19 @@ export default function ServiceStep() {
                 aria-label="Vertical tabs example"
                 className={classes.tabs}
             >
-                <Tab label="Item One" {...a11yProps(0)} />
-                <Tab label="Item Two" {...a11yProps(1)} />
-                <Tab label="Item Three" {...a11yProps(2)} />
-                <Tab label="Item Four" {...a11yProps(3)} />
-                <Tab label="Item Five" {...a11yProps(4)} />
-                <Tab label="Item Six" {...a11yProps(5)} />
-                <Tab label="Item Seven" {...a11yProps(6)} />
+                {data?.map((category, i) => <Tab key={i} label={category.name} {...a11yProps(i)} />)}
             </Tabs>
-            <TabPanel value={value} index={0}>
-                <ServiceTile/>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-                Item Two
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-                Item Three
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-                Item Four
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-                Item Five
-            </TabPanel>
-            <TabPanel value={value} index={5}>
-                Item Six
-            </TabPanel>
-            <TabPanel value={value} index={6}>
-                Item Seven
-            </TabPanel>
+            <div className={classes.tabPanel}>
+                {data?.map((category, i) =>
+                    <TabPanel key={i} value={value} index={i}>
+                        {category?.services.map(service =>
+                            <Grid key={service.id} item>
+                                <ServiceTile category={category} service={service} onAdd={onAdd} disabled={!!selectedServices.find(x => x.id === service.id)}/>
+                            </Grid>
+                        )}
+                    </TabPanel>
+                )}
+            </div>
         </div>
     );
 }

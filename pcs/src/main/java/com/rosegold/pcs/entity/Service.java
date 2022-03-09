@@ -1,5 +1,6 @@
 package com.rosegold.pcs.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -31,6 +32,7 @@ public class Service extends BaseEntity {
   @NotNull
   @ManyToOne
   @JoinColumn
+  @JsonIgnoreProperties("services")
   private Category category;
 
   private boolean enabled = true;

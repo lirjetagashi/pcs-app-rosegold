@@ -32,5 +32,9 @@ export function formatCurrency(value) {
 }
 
 export function formatName(firstName, lastName) {
+    if (!lastName) {
+        return firstName
+    }
+
     return `${firstName} ${lastName?.charAt(0)}.`
 }

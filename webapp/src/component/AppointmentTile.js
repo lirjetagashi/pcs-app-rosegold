@@ -100,7 +100,7 @@ export default function AppointmentTile({appointment, className, moveLabel, onMo
     const classes = useStyles({blur: `blur(${clicked ? "4px" : "0px"})`});
 
     const tableColumns = [
-        {title: "Service", field: "service", renderValue: row => `${row.category.name} - ${row.name}`},
+        {title: "Service", field: "service", renderValue: row => row.name},
         {title: "Employee", field: "employee.firstName"},
     ];
 

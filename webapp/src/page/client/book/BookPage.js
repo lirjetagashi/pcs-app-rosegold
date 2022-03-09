@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -12,6 +12,8 @@ import DateIcon from '@material-ui/icons/Today';
 import clsx from "clsx";
 import {Paper, StepConnector, withStyles} from "@material-ui/core";
 import PropTypes from "prop-types";
+import AppointmentSummary from "./AppointmentSummary";
+import StaffStep from "./StaffStep";
 
 const CustomStepConnector = withStyles({
     alternativeLabel: {
@@ -83,24 +85,30 @@ function StepIcon(props) {
 }
 
 StepIcon.propTypes = {
-    /**
-     * Whether this step is active.
-     */
     active: PropTypes.bool,
-    /**
-     * Mark the step as completed. Is passed to child components.
-     */
     completed: PropTypes.bool,
-    /**
-     * The label displayed in the step icon.
-     */
     icon: PropTypes.node,
 };
 
 const useStyles = makeStyles((theme) => ({
     root: {
         height: "calc(100% - 65px)",
+    },
+    leftPanel: {
+        height: "100%",
+        flexBasis: "75%",
+        flexGrow: 1,
         padding: theme.spacing(2),
+    },
+    rightPanel: {
+        flexShrink: 0,
+        height: "100%",
+        minWidth: 250,
+        flexGrow: 1,
+        padding: theme.spacing(2),
+        "& .MuiPaper-root": {
+            height: "100%",
+        }
     },
     stepper: {
         flexGrow: 0,
@@ -128,23 +136,57 @@ function getSteps() {
     return ['Service', 'Staff', 'Date and time'];
 }
 
-function getStepContent(step) {
-    switch (step) {
-        case 0:
-            return <ServiceStep/>;
-        case 1:
-            return 'What is an ad group anyways?';
-        case 2:
-            return 'This is the bit I really care about!';
-        default:
-            return 'Unknown step';
-    }
-}
+export const defaultStaff = {id: -1, firstName: "Any available staff"};
+const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines"));
+const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
 
 export default function BookPage({}) {
     const classes = useStyles();
-    const [activeStep, setActiveStep] = React.useState(0);
+    const [activeStep, setActiveStep] = React.useState(initialActiveStep);
+    const [appointmentLines, setAppointmentLines] = useState(initialAppointmentLines);
     const steps = getSteps();
+
+    function getStepContent(step) {
+        switch (step) {
+            case 0:
+                return <ServiceStep onAdd={addService} selectedServices={appointmentLines.map(al => al.service)}/>;
+            case 1:
+                return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
+            case 2:
+                return 'This is the bit I really care about!';
+            default:
+                return 'Unknown step';
+        }
+    }
+
+    useEffect(() => {
+        localStorage.setItem("appointmentLines", JSON.stringify(appointmentLines));
+        if (appointmentLines.length === 0) {
+            setActiveStep(0);
+        }
+    }, [appointmentLines]);
+
+    useEffect(() => {
+        localStorage.setItem("appointmentStep", activeStep);
+    }, [activeStep]);
+
+    function changeStaff(appointmentLine, employee) {
+        setAppointmentLines(prev => prev.map(al => {
+            if (al.service.id === appointmentLine.service.id) {
+                return {...al, employee: employee};
+            }
+
+            return al
+        }))
+    }
+
+    function addService(category, service) {
+        setAppointmentLines(prev => [...prev, {service: {...service, category: category}, employee: defaultStaff}]);
+    }
+
+    function removeService(service) {
+        setAppointmentLines(prev => prev.filter(al => al.service.id !== service.id))
+    }
 
     function handleNext() {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -155,29 +197,37 @@ export default function BookPage({}) {
     }
 
     return (
-        <Box display="flex" flexDirection="column" className={classes.root}>
-            <Paper variant="outlined" className={classes.stepper}>
-                <Stepper activeStep={activeStep} connector={<CustomStepConnector/>}>
-                    {steps.map((label, index) => (
-                        <Step key={label}>
-                            <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
-                        </Step>
-                    ))}
-                </Stepper>
-            </Paper>
-            <Paper variant="outlined" className={classes.content}>{getStepContent(activeStep)}</Paper>
-            <div className={classes.stepButtons}>
-                <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                    Back
-                </Button>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleNext}
-                    className={classes.button}
-                >
-                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-                </Button>
+        <Box display="flex" className={classes.root} flexWrap="wrap">
+            <Box display="flex" flexDirection="column" className={classes.leftPanel}>
+                <Paper variant="outlined" className={classes.stepper}>
+                    <Stepper activeStep={activeStep} connector={<CustomStepConnector/>}>
+                        {steps.map((label, index) => (
+                            <Step key={label}>
+                                <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
+                            </Step>
+                        ))}
+                    </Stepper>
+                </Paper>
+                <Paper variant="outlined" className={classes.content}>{getStepContent(activeStep)}</Paper>
+                <div className={classes.stepButtons}>
+                    <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+                        Back
+                    </Button>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleNext}
+                        className={classes.button}
+                        disabled={appointmentLines.length === 0}
+                    >
+                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                    </Button>
+                </div>
+            </Box>
+            <div className={classes.rightPanel}>
+                <Paper variant="outlined">
+                    <AppointmentSummary appointmentLines={appointmentLines} onRemove={removeService}/>
+                </Paper>
             </div>
         </Box>
     );
