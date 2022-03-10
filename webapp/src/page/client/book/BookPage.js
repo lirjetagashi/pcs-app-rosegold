@@ -14,6 +14,7 @@ import {Paper, StepConnector, withStyles} from "@material-ui/core";
 import PropTypes from "prop-types";
 import AppointmentSummary from "./AppointmentSummary";
 import StaffStep from "./StaffStep";
+import DateTimeStep from "./DateTimeStep";
 
 const CustomStepConnector = withStyles({
     alternativeLabel: {
@@ -115,6 +116,8 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: theme.spacing(2)
     },
     content: {
+        height: "100%",
+        overflowY: "auto",
         flexGrow: 1,
         marginBottom: theme.spacing(2)
     },
@@ -153,7 +156,7 @@ export default function BookPage({}) {
             case 1:
                 return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
             case 2:
-                return 'This is the bit I really care about!';
+                return <DateTimeStep />;
             default:
                 return 'Unknown step';
         }

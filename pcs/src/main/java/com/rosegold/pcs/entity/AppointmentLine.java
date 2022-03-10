@@ -1,5 +1,6 @@
 package com.rosegold.pcs.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.rosegold.pcs.validation.group.Update;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -23,6 +24,7 @@ public class AppointmentLine extends BaseEntity {
   @JoinColumn
   private Employee employee;
 
+  @JsonIgnoreProperties("category")
   @Valid
   @NotNull
   @ConvertGroup(to = Update.class)

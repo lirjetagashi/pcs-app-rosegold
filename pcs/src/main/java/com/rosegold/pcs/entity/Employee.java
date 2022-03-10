@@ -1,5 +1,6 @@
 package com.rosegold.pcs.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,6 +34,7 @@ public class Employee extends BaseEntity {
       inverseJoinColumns = @JoinColumn(name = "schedules_id"))
   private List<Schedule> schedules;
 
+  @JsonIgnoreProperties("services")
   @ManyToMany(fetch = EAGER, cascade = CascadeType.MERGE)
   @JoinTable(name = "employee_categories",
       joinColumns = @JoinColumn(name = "employee_id"),

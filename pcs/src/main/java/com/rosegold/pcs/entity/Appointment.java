@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.ConvertGroup;
+import javax.validation.groups.Default;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,6 +42,7 @@ public class Appointment extends BaseEntity {
   private BigDecimal total;
 
   @Valid
+  @ConvertGroup(from = Update.class, to = Default.class)
   @OneToMany(orphanRemoval = true, cascade = ALL, fetch = EAGER)
   @JoinColumn(name = "appointment_id", nullable = false)
   private List<AppointmentLine> appointmentLines;
