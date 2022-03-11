@@ -28,3 +28,110 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+.parallax {
+    /* The image used */
+    background-image: url('images/main2.jpg');
+    /* Full height */
+    height: 100%;
+
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+.font-160{
+    font-size: 160px;
+}
+.catchyPhrase{
+    height:30%;
+    font-size:80px;
+    text-align: right;
+    font-family: 'Playfair Display', serif;
+    color: white;
+    position: absolute;
+    right: 30px;
+    bottom: 13%;
+}
+
+.page{
+    height:700px;
+    font-size:36px;
+    padding-top:100px;
+}
+.informationPage{
+    width: 1120px;
+    height: 500px;
+    margin: 0 auto;
+    font-family: 'Playfair Display', serif;
+}
+
+.availableServices{
+    width: 500px;
+    height: 500px;
+    color: white;
+    padding-top: 200px;
+    text-align: center;
+    font-weight: 900;
+    float: left;
+    border: 10px solid white;
+}
+.availableServicesElements{
+    width: 520px;
+    height: 500px;
+    float:right;
+    color: white;
+    border: 10px solid transparent;
+}
+
+.availableServicesElementsShared{
+    width: 250px;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    line-height: 250px;
+    float: left;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    text-shadow: 0 0 5px black;
+}
+
+.nail{
+    background-image: url('images/nail.jpg');
+}
+.hair{
+    background-image: url('images/hair.jpg');
+}
+.eyelash{
+    background-image: url('images/eyelash.jpg');
+}
+.makeup{
+    background-image: url('images/makeup.jpg');
+}
+
+.aboutUs{
+    width: 500px;
+    height: 500px;
+    color: white;
+    line-height: 500px;
+    text-align: center;
+    font-weight: 900;
+    float: right;
+    border: 10px solid white;
+}
+
+.aboutUsElement{
+    width: 500px;
+    height: 500px;
+    float:left;
+    color: white;
+    border: 10px solid transparent;
+}
+
+.aboutUslistOfInformation{
+    font-size: 20px;
+    font-family: 'Roboto Mono', monospace;
+}
