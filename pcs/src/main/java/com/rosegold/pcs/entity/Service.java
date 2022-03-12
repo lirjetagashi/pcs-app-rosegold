@@ -26,7 +26,7 @@ public class Service extends BaseEntity {
 
   @NotNull
   @Positive
-  private Long durationInMinutes;
+  private Integer durationInMinutes;
 
   @Valid
   @NotNull

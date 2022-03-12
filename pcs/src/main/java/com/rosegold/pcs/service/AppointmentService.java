@@ -45,4 +45,8 @@ public class AppointmentService extends BasicServiceOperations<AppointmentReposi
         .collect(Collectors.groupingBy(x -> x.getDateTime().toLocalDate(), TreeMap::new, Collectors.toList()));
   }
 
+  public List<Appointment> findAllAfter(LocalDateTime dateTime) {
+    return repository.findByDateTimeIsAfter(dateTime);
+  }
+
 }

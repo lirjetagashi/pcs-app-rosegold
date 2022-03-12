@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function ServiceTile({category, service, onAdd, disabled}) {
+export default function ServiceTile({category, service, onAdd, disabled, order}) {
 
     const classes = useStyles();
 
@@ -40,7 +40,7 @@ export default function ServiceTile({category, service, onAdd, disabled}) {
                 <Typography style={{clear: "both"}} color="textSecondary" >{service.durationInMinutes} min.</Typography>
             </div>
             <div>
-                <Button variant="outlined" color="secondary" style={{float: "right"}} onClick={() => onAdd(category, service)} disabled={disabled}>Add</Button>
+                <Button variant="outlined" color="secondary" style={{float: "right"}} onClick={() => onAdd(category, service)} disabled={disabled}>{order || "Add"}</Button>
             </div>
         </Card>
     );

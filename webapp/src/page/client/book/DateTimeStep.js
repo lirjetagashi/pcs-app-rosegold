@@ -6,6 +6,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {DatePicker, KeyboardDatePicker} from "@material-ui/pickers";
 import Button from "@material-ui/core/Button";
 import {ToggleButton, ToggleButtonGroup} from "@material-ui/lab";
+import CustomToggleButton from "../../../component/CustomToggleButton";
 
 const useStyles = makeStyles(theme => ({
     datePanel: {
@@ -42,6 +43,19 @@ function Header({title}) {
     )
 }
 
+function TimeToggleButton({value, selected, onChange}) {
+    return (
+        <CustomToggleButton
+            value={value}
+            selected={selected === value}
+            onChange={onChange}
+            style={{width: "100%"}}
+        >
+            {value}
+        </CustomToggleButton>
+    )
+}
+
 export default function DateTimeStep({}) {
 
     const classes = useStyles();
@@ -74,31 +88,22 @@ export default function DateTimeStep({}) {
                     <div className={classes.timeFrames}>
                         <Header title="Morning"/>
                         <List component="nav" className={classes.list}>
-                            <ToggleButton fullWidth
-                                value="08:00 AM"
-                                          selected={selectedTime === '08:00 AM'}
-                                          onChange={handleTimeChange}
-                                          color="secondary"
-                            >
-                                08:00 AM
-                            </ToggleButton>
-                            <ToggleButton color="primary" value="center" aria-label="centered">
-                                09:00 AM
-                            </ToggleButton>
+                            <TimeToggleButton value="08:00 AM" selected={selectedTime} onChange={handleTimeChange}/>
+                            <TimeToggleButton value="09:00 AM" selected={selectedTime} onChange={handleTimeChange}/>
                         </List>
                     </div>
                     <div className={classes.timeFrames}>
                         <Header title="Afternoon"/>
                         <List component="nav" className={classes.list}>
-                            <Button fullWidth variant="outlined" color="primary">08:00 AM</Button>
-                            <Button fullWidth variant="outlined" color="primary">09:00 AM</Button>
+                            <TimeToggleButton value="01:00 PM" selected={selectedTime} onChange={handleTimeChange}/>
+                            <TimeToggleButton value="02:00 PM" selected={selectedTime} onChange={handleTimeChange}/>
                         </List>
                     </div>
                     <div className={classes.timeFrames}>
                         <Header title="Evening"/>
                         <List component="nav" className={classes.list}>
-                            <Button fullWidth variant="outlined" color="primary">08:00 AM</Button>
-                            <Button fullWidth variant="outlined" color="primary">09:00 AM</Button>
+                            <TimeToggleButton value="06:00 PM" selected={selectedTime} onChange={handleTimeChange}/>
+                            <TimeToggleButton value="07:00 PM" selected={selectedTime} onChange={handleTimeChange}/>
                         </List>
                     </div>
                 </Box>

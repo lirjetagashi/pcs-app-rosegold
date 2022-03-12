@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @RequiredArgsConstructor
 public abstract class BasicServiceOperations<R extends JpaRepository<E, Long>, E extends BaseEntity> {
@@ -19,6 +20,10 @@ public abstract class BasicServiceOperations<R extends JpaRepository<E, Long>, E
 
   public E findById(Long id) {
     return repository.findById(id).orElse(null);
+  }
+
+  public List<E> findByIds(Set<Long> ids) {
+    return repository.findAllById(ids);
   }
 
   public List<E> findAll() {

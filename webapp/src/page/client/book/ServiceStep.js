@@ -59,10 +59,9 @@ const useStyles = makeStyles((theme) => ({
 
 const categoryService = new CategoryService();
 
-export default function ServiceStep({onAdd, selectedServices}) {
+export default function ServiceStep({onAdd, appointmentLines}) {
     const classes = useStyles();
     const [value, setValue] = useState(0);
-
     const {data} = useQuery(QueryKeys.CATEGORIES, () => categoryService.findAll())
 
     function handleChange(event, newValue) {
@@ -84,10 +83,17 @@ export default function ServiceStep({onAdd, selectedServices}) {
             <div className={classes.tabPanel}>
                 {data?.map((category, i) =>
                     <TabPanel key={i} value={value} index={i}>
-                        {category?.services.map(service =>
-                            <Grid key={service.id} item>
-                                <ServiceTile category={category} service={service} onAdd={onAdd} disabled={!!selectedServices.find(x => x.id === service.id)}/>
-                            </Grid>
+                        {category?.services.map(service => {
+                                const selectedAppointmentLine = appointmentLines.find(x => x.service.id === service.id)
+                                return (
+                                    <Grid key={service.id} item>
+                                    <ServiceTile category={category}
+                                                 service={service}
+                                                 onAdd={onAdd}
+                                                 disabled={!!selectedAppointmentLine}
+                                                 order={selectedAppointmentLine?.order}/>
+                                </Grid>)
+                            }
                         )}
                     </TabPanel>
                 )}

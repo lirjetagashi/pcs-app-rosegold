@@ -152,7 +152,7 @@ export default function BookPage({}) {
     function getStepContent(step) {
         switch (step) {
             case 0:
-                return <ServiceStep onAdd={addService} selectedServices={appointmentLines.map(al => al.service)}/>;
+                return <ServiceStep appointmentLines={appointmentLines} onAdd={addService}/>;
             case 1:
                 return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
             case 2:
@@ -184,7 +184,7 @@ export default function BookPage({}) {
     }
 
     function addService(category, service) {
-        setAppointmentLines(prev => [...prev, {service: {...service, category: category}, employee: defaultStaff}]);
+        setAppointmentLines(prev => [...prev, {order: prev.length + 1, service: {...service, category: category}, employee: defaultStaff}]);
     }
 
     function removeService(service) {
