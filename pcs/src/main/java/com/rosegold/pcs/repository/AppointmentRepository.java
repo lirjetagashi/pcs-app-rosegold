@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
@@ -20,6 +21,6 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
   )
   List<Appointment> findByDateTimeBetweenAndStatus(String user, LocalDateTime from, LocalDateTime to, StatusType statusType);
 
-  List<Appointment> findByDateTimeIsAfter(LocalDateTime dateTime);
+  List<Appointment> findByDateTimeIsAfterAndAppointmentLines_Employee_IdIn(LocalDateTime dateTime, Set<Long> employeeIds);
 
 }

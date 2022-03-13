@@ -1,55 +1,72 @@
 package com.rosegold.pcs.payload;
 
 import com.rosegold.pcs.entity.Employee;
+import com.rosegold.pcs.entity.Schedule;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Setter
 public class StaffAvailability {
 
-  private Employee employee;
+    private Employee employee;
 
-  private boolean noSelectedStaff;
+    private List<Availability> availability;
 
-  private int noSelectedStaffCount;
-
-  private Availability availability;
-
-  public StaffAvailability(LocalDate date, int timeFrame, Employee employee) {
-    if (employee == null) {
-      this.availability = new Availability(date, timeFrame, time -> true);
-      this.noSelectedStaff = true;
-      this.noSelectedStaffCount = 1;
-      return;
+    public StaffAvailability(LocalDate maxAppointmentDate, AppointmentReservation appointmentReservation, int timeFrame, Employee employee) {
+        List<Schedule> schedules = employee.getSchedules();
+        BiPredicate<LocalDate, LocalTime> notReserved = appointmentReservation == null ?
+                (a, b) -> true :
+                (date, time) -> LocalDateTime.of(date, time).isBefore(appointmentReservation.getFrom()) ||
+                        LocalDateTime.of(date, time).isAfter(appointmentReservation.getTo());
+        BiPredicate<LocalDate, LocalTime> inSchedule = (date, time) -> schedules.stream()
+                .anyMatch(
+                        schedule -> date.getDayOfWeek() == schedule.getDayOfWeek() &&
+                                time.isAfter(schedule.getStartTime()) &&
+                                time.isBefore(schedule.getEndTime())
+                );
+        this.availability = buildAvailability(maxAppointmentDate, timeFrame, inSchedule, notReserved);
+        this.employee = employee;
     }
 
-    var schedules = employee.getSchedules();
-    Predicate<LocalTime> isAvailable = time -> schedules.stream()
-        .anyMatch(schedule ->
-            date.getDayOfWeek() == schedule.getDayOfWeek() &&
-                time.isBefore(schedule.getStartTime()) &&
-                time.isAfter(schedule.getEndTime())
+    public StaffAvailability merge(StaffAvailability other) {
+        Map<LocalDate, List<LocalTime>> reservedTimesByDate = other.getAvailability().stream()
+                .collect(Collectors.toMap(
+                        Availability::getDate,
+                        x -> x.getAvailableByTime()
+                                .entrySet()
+                                .stream()
+                                .filter(y -> !y.getValue()).map(Map.Entry::getKey)
+                                .collect(Collectors.toList())
+                ));
+        this.availability.forEach(
+                availability -> reservedTimesByDate.getOrDefault(availability.getDate(), List.of()).forEach(availability::reserveAtTime)
         );
-    this.availability = new Availability(date, timeFrame, isAvailable);
-    this.employee = employee;
-  }
+        return this;
+    }
 
-  public void increaseNoSelectedStaffCount() {
-    this.noSelectedStaffCount++;
-  }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StaffAvailability that = (StaffAvailability) o;
+        return Objects.equals(employee, that.employee);
+    }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    StaffAvailability that = (StaffAvailability) o;
-    return Objects.equals(employee, that.employee);
-  }
+    private List<Availability> buildAvailability(LocalDate maxAppointmentDate, int timeFrame, BiPredicate<LocalDate, LocalTime> inSchedule, BiPredicate<LocalDate, LocalTime> notReserved) {
+        return Stream.iterate(LocalDate.now(), d -> d.isBefore(maxAppointmentDate), d -> d.plusDays(1))
+                .map(d -> new Availability(d, timeFrame, inSchedule, notReserved))
+                .collect(Collectors.toList());
+    }
 
 }

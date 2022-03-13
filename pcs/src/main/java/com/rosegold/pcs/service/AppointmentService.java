@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -45,8 +46,8 @@ public class AppointmentService extends BasicServiceOperations<AppointmentReposi
         .collect(Collectors.groupingBy(x -> x.getDateTime().toLocalDate(), TreeMap::new, Collectors.toList()));
   }
 
-  public List<Appointment> findAllAfter(LocalDateTime dateTime) {
-    return repository.findByDateTimeIsAfter(dateTime);
+  public List<Appointment> findAllAfterByEmployeeIds(LocalDateTime dateTime, Set<Long> employeeIds) {
+    return repository.findByDateTimeIsAfterAndAppointmentLines_Employee_IdIn(dateTime, employeeIds);
   }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,8 +20,8 @@ public class AvailabilityController {
 
   private final AvailabilityService availabilityService;
 
-  @GetMapping("/dates")
-  public List<Availability> getAvailableDates(@RequestBody @NotEmpty List<AppointmentLine> appointmentLines) {
+  @GetMapping
+  public Collection<Availability> getAvailability(@RequestBody @NotEmpty List<AppointmentLine> appointmentLines) {
     return availabilityService.getAvailableDates(appointmentLines);
   }
 
