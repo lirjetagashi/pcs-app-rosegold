@@ -38,3 +38,7 @@ export function formatName(firstName, lastName) {
 
     return `${firstName} ${lastName?.charAt(0)}.`
 }
+
+export function getISODate(date) {
+    return date?.toISOString().substring(0, 10);
+}

@@ -31,7 +31,6 @@ public class AppointmentLine extends BaseEntity implements Comparable<Appointmen
   @JoinColumn
   private Employee employee;
 
-  @JsonIgnoreProperties("category")
   @Valid
   @NotNull
   @ConvertGroup(to = Update.class)

@@ -156,7 +156,7 @@ export default function BookPage({}) {
             case 1:
                 return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
             case 2:
-                return <DateTimeStep />;
+                return <DateTimeStep appointmentLines={appointmentLines}/>;
             default:
                 return 'Unknown step';
         }
@@ -184,7 +184,12 @@ export default function BookPage({}) {
     }
 
     function addService(category, service) {
-        setAppointmentLines(prev => [...prev, {order: prev.length + 1, service: {...service, category: category}, employee: defaultStaff}]);
+        const {services, ...categoryWithoutServices} = category
+        setAppointmentLines(prev => [...prev, {
+            order: prev.length + 1,
+            service: {...service, category: categoryWithoutServices},
+            employee: defaultStaff
+        }]);
     }
 
     function removeService(service) {

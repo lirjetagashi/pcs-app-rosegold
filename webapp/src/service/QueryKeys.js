@@ -5,4 +5,5 @@ export const QueryKeys = {
     SCHEDULES: "SCHEDULES",
     CATEGORIES: "CATEGORIES",
     APPOINTMENTS: "APPOINTMENTS",
+    AVAILABILITY: (appointmentLines) => ["AVAILABILITY", appointmentLines]
 }

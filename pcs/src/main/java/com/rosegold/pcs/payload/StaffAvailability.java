@@ -32,7 +32,7 @@ public class StaffAvailability {
         BiPredicate<LocalDate, LocalTime> inSchedule = (date, time) -> schedules.stream()
                 .anyMatch(
                         schedule -> date.getDayOfWeek() == schedule.getDayOfWeek() &&
-                                time.isAfter(schedule.getStartTime()) &&
+                            (time.equals(schedule.getStartTime()) || time.isAfter(schedule.getStartTime())) &&
                                 time.isBefore(schedule.getEndTime())
                 );
         this.availability = buildAvailability(maxAppointmentDate, timeFrame, inSchedule, notReserved);
