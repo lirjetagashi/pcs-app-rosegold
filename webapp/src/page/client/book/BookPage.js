@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
@@ -11,10 +11,12 @@ import PersonIcon from '@material-ui/icons/Person';
 import DateIcon from '@material-ui/icons/Today';
 import clsx from "clsx";
 import {Paper, StepConnector, withStyles} from "@material-ui/core";
-import PropTypes from "prop-types";
+import PropTypes, {func} from "prop-types";
 import AppointmentSummary from "./AppointmentSummary";
 import StaffStep from "./StaffStep";
 import DateTimeStep from "./DateTimeStep";
+import useUser from "../../../hooks/useUser";
+import UserAccountDialog from "./UserAccountDialog";
 
 const CustomStepConnector = withStyles({
     alternativeLabel: {
@@ -144,21 +146,23 @@ const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLine
 const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
 
 export default function BookPage({}) {
+
     const classes = useStyles();
-    const [activeStep, setActiveStep] = React.useState(initialActiveStep);
+    const dateTime = useRef();
+    const [open, setOpen] = useState(false);
+    const [activeStep, setActiveStep] = useState(initialActiveStep);
     const [appointmentLines, setAppointmentLines] = useState(initialAppointmentLines);
     const steps = getSteps();
+    const isLastStep = activeStep === steps.length - 1;
 
     function getStepContent(step) {
         switch (step) {
             case 0:
                 return <ServiceStep appointmentLines={appointmentLines} onAdd={addService}/>;
             case 1:
-                // return <div/>
-                 return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
+                return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
             case 2:
-                return <DateTimeStep appointmentLines={appointmentLines}/>;
-                // return <div/>
+                return <DateTimeStep appointmentLines={appointmentLines} dateTime={dateTime}/>;
             default:
                 return 'Unknown step';
         }
@@ -202,12 +206,22 @@ export default function BookPage({}) {
         setActiveStep((prevActiveStep) => prevActiveStep + 1);
     }
 
+    function handleFinish() {
+        const appointment = {
+            dateTime: dateTime.current,
+            appointmentLines: appointmentLines
+        }
+
+        setOpen(true);
+        console.log("Appointment: ", appointment);
+    }
+
     function handleBack() {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     }
 
     return (
-        <Box display="flex" className={classes.root} flexWrap="wrap">
+        <><Box display="flex" className={classes.root} flexWrap="wrap">
             <Box display="flex" flexDirection="column" className={classes.leftPanel}>
                 <Paper variant="outlined" className={classes.stepper}>
                     <Stepper activeStep={activeStep} connector={<CustomStepConnector/>}>
@@ -226,11 +240,11 @@ export default function BookPage({}) {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={handleNext}
+                        onClick={isLastStep ? handleFinish : handleNext}
                         className={classes.button}
                         disabled={!appointmentLines || appointmentLines.length === 0}
                     >
-                        {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                        {isLastStep ? 'Finish' : 'Next'}
                     </Button>
                 </div>
             </Box>
@@ -240,5 +254,7 @@ export default function BookPage({}) {
                 </Paper>
             </div>
         </Box>
+            {open && <UserAccountDialog open={open} setOpen={setOpen}/>}
+        </>
     );
 }

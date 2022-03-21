@@ -10,7 +10,7 @@ import {useMutation} from "react-query";
 import {QueryKeys} from "../../../service/QueryKeys";
 import {getISODate} from "../../../utils/Utils";
 import SimpleBar from "simplebar-react";
-import {addDays, parseISO, startOfDay, subDays} from "date-fns";
+import {parse, parseISO} from "date-fns";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -66,7 +66,7 @@ function TimeToggleButton({value, selected, onChange}) {
 
 const availabilityService = new AvailabilityService();
 
-export default function DateTimeStep({appointmentLines}) {
+export default function DateTimeStep({appointmentLines, dateTime}) {
 
     console.log("DateTimeStep");
 
@@ -81,6 +81,10 @@ export default function DateTimeStep({appointmentLines}) {
     useEffect(() => {
         mutate(appointmentLines);
     }, [appointmentLines]);
+
+    useEffect(() => {
+        dateTime.current = selectedDateAvailability.date + 'T' + selectedTime
+    }, [selectedTime]);
 
     function handleTimeChange(event) {
         setSelectedTime(event.target.textContent);
