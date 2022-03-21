@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Data
-public class Availability {
+public class Availability implements Comparable<Availability> {
 
   private LocalDate date;
 
@@ -25,12 +25,12 @@ public class Availability {
   @JsonIgnore
   private Map<LocalTime, Boolean> availableByTime;
 
-  public Availability(LocalDate date, int timeFrame, BiPredicate<LocalDate, LocalTime> isWorking, BiPredicate<LocalDate, LocalTime> notReserved) {
+  public Availability(LocalDate date, int timeFrame, BiPredicate<LocalDate, LocalTime> inSchedule, BiPredicate<LocalDate, LocalTime> isAvailable) {
     this.date = date;
     val timeFramesForOneDay = 60 / timeFrame * 24;
     this.availableByTime = Stream.iterate(LocalTime.MIN, time -> time.plusMinutes(timeFrame))
         .limit(timeFramesForOneDay)
-        .collect(Collectors.toMap(Function.identity(), time -> isWorking.and(notReserved).test(date, time)));
+        .collect(Collectors.toMap(Function.identity(), time -> inSchedule.and(isAvailable).test(date, time)));
     if (availableByTime.values().stream().noneMatch(x -> x)) {
       this.noAvailability = true;
     }
@@ -82,4 +82,8 @@ public class Availability {
     return "Evening";
   }
 
+  @Override
+  public int compareTo(Availability o) {
+    return this.date.compareTo(o.getDate());
+  }
 }

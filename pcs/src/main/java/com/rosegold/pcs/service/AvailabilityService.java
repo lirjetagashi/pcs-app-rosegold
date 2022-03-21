@@ -49,7 +49,10 @@ public class AvailabilityService {
         Map<Long, List<Employee>> employeesByCategoryId = getEmployeesByCategoryId(categoryIds, selectedEmployees);
         Map<LocalDate, Availability> availabilityByDate = getAvailabilityByDate(appointmentLines, availabilityByEmployeeId, employeesByCategoryId);
 
-        return availabilityByDate.values();
+        return availabilityByDate.values()
+            .stream()
+            .sorted()
+            .collect(Collectors.toList());
     }
 
     private Map<LocalDate, Availability> getAvailabilityByDate(List<AppointmentLine> appointmentLines, Map<Long, StaffAvailability> availabilityByEmployeeId, Map<Long, List<Employee>> employeesByCategoryId) {

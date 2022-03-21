@@ -154,9 +154,11 @@ export default function BookPage({}) {
             case 0:
                 return <ServiceStep appointmentLines={appointmentLines} onAdd={addService}/>;
             case 1:
-                return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
+                // return <div/>
+                 return <StaffStep appointmentLines={appointmentLines} onStaffChange={changeStaff}/>
             case 2:
                 return <DateTimeStep appointmentLines={appointmentLines}/>;
+                // return <div/>
             default:
                 return 'Unknown step';
         }

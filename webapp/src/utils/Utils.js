@@ -1,3 +1,5 @@
+import {format} from "date-fns";
+
 export function resolveField(object, path, defaultValue) {
     return path
         .split('.')
@@ -40,5 +42,5 @@ export function formatName(firstName, lastName) {
 }
 
 export function getISODate(date) {
-    return date?.toISOString().substring(0, 10);
+    return format(date, "yyyy-MM-dd");
 }

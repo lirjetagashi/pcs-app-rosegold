@@ -10,6 +10,7 @@ import {useMutation} from "react-query";
 import {QueryKeys} from "../../../service/QueryKeys";
 import {getISODate} from "../../../utils/Utils";
 import SimpleBar from "simplebar-react";
+import {addDays, parseISO, startOfDay, subDays} from "date-fns";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -67,14 +68,14 @@ const availabilityService = new AvailabilityService();
 
 export default function DateTimeStep({appointmentLines}) {
 
+    console.log("DateTimeStep");
+
     const classes = useStyles();
     const [date, setDate] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('08:00 AM');
     const [selectedDateAvailability, setSelectedDateAvailability] = useState({date: getISODate(new Date()), noAvailability: true});
     const {mutate, data} = useMutation(QueryKeys.AVAILABILITY(appointmentLines), al => availabilityService.getAvailability(al), {
-        onSuccess: d => {
-            
-        }
+        onSuccess: selectFirstAvailableDate
     });
 
     useEffect(() => {
@@ -82,18 +83,27 @@ export default function DateTimeStep({appointmentLines}) {
     }, [appointmentLines]);
 
     function handleTimeChange(event) {
-        console.log("Event: ", event);
         setSelectedTime(event.target.textContent);
     }
 
     function shouldDisableDate(date) {
-        const isoDate = date.toISOString().substring(0, 10);
+        const isoDate = getISODate(date);
         if (!data) {
             return true;
         }
 
         return !data.some(availability => availability.date === isoDate) ||
             data.some(availability => availability.date === isoDate && availability.noAvailability);
+    }
+
+    function selectFirstAvailableDate(availabilities) {
+        if (!availabilities || availabilities.length === 0) {
+            return;
+        }
+        
+        const firstAvailable = availabilities[0];
+        setSelectedDateAvailability(firstAvailable);
+        setDate(parseISO(firstAvailable.date));
     }
 
     function handleDateChange(newDate) {

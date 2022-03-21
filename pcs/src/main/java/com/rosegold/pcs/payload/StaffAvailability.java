@@ -25,7 +25,7 @@ public class StaffAvailability {
 
     public StaffAvailability(LocalDate maxAppointmentDate, AppointmentReservation appointmentReservation, int timeFrame, Employee employee) {
         List<Schedule> schedules = employee.getSchedules();
-        BiPredicate<LocalDate, LocalTime> notReserved = appointmentReservation == null ?
+        BiPredicate<LocalDate, LocalTime> isAvailable = appointmentReservation == null ?
                 (a, b) -> true :
                 (date, time) -> LocalDateTime.of(date, time).isBefore(appointmentReservation.getFrom()) ||
                         LocalDateTime.of(date, time).isAfter(appointmentReservation.getTo());
@@ -35,7 +35,7 @@ public class StaffAvailability {
                             (time.equals(schedule.getStartTime()) || time.isAfter(schedule.getStartTime())) &&
                                 time.isBefore(schedule.getEndTime())
                 );
-        this.availability = buildAvailability(maxAppointmentDate, timeFrame, inSchedule, notReserved);
+        this.availability = buildAvailability(maxAppointmentDate, timeFrame, inSchedule, isAvailable);
         this.employee = employee;
     }
 
@@ -63,9 +63,9 @@ public class StaffAvailability {
         return Objects.equals(employee, that.employee);
     }
 
-    private List<Availability> buildAvailability(LocalDate maxAppointmentDate, int timeFrame, BiPredicate<LocalDate, LocalTime> inSchedule, BiPredicate<LocalDate, LocalTime> notReserved) {
+    private List<Availability> buildAvailability(LocalDate maxAppointmentDate, int timeFrame, BiPredicate<LocalDate, LocalTime> inSchedule, BiPredicate<LocalDate, LocalTime> isAvailable) {
         return Stream.iterate(LocalDate.now(), d -> d.isBefore(maxAppointmentDate), d -> d.plusDays(1))
-                .map(d -> new Availability(d, timeFrame, inSchedule, notReserved))
+                .map(d -> new Availability(d, timeFrame, inSchedule, isAvailable))
                 .collect(Collectors.toList());
     }
 
