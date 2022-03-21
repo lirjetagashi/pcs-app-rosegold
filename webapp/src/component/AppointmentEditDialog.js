@@ -119,10 +119,11 @@ export default function AppointmentEditDialog({appointment, setAppointment, open
     }
 
     function handleAdd(rowData) {
-        return validateAppointment(rowData)
+        const appointmentLine = {...rowData, order: appointment?.appointmentLines?.length || 1}
+        return validateAppointment(appointmentLine)
             .then(() => setAppointment(prev => ({
                 ...prev,
-                appointmentLines: [...prev.appointmentLines, rowData]
+                appointmentLines: [...prev.appointmentLines, appointmentLine]
             })));
     }
 

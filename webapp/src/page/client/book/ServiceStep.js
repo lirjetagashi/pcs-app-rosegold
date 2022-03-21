@@ -68,6 +68,8 @@ export default function ServiceStep({onAdd, appointmentLines}) {
         setValue(newValue);
     }
 
+    console.log("Data: ", data);
+
     return (
         <div className={classes.root}>
             <Tabs
@@ -84,7 +86,7 @@ export default function ServiceStep({onAdd, appointmentLines}) {
                 {data?.map((category, i) =>
                     <TabPanel key={i} value={value} index={i}>
                         {category?.services.map(service => {
-                                const selectedAppointmentLine = appointmentLines.find(x => x.service.id === service.id)
+                                const selectedAppointmentLine = appointmentLines?.find(x => x.service.id === service.id)
                                 return (
                                     <Grid key={service.id} item>
                                     <ServiceTile category={category}

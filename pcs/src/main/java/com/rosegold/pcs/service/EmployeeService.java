@@ -29,4 +29,20 @@ public class EmployeeService extends BasicServiceOperations<EmployeeRepository, 
 
     return employees;
   }
+
+  public Employee save(Employee entity) {
+    if (entity.getId() == null) {
+      super.save(entity);
+    }
+
+    validateEntity(entity);
+    Employee employee = findById(entity.getId());
+    employee.setCategories(entity.getCategories());
+    employee.setSchedules(entity.getSchedules());
+    employee.setFirstName(entity.getFirstName());
+    employee.setLastName(entity.getLastName());
+    employee.setEnabled(entity.isEnabled());
+
+    return repository.save(employee);
+  }
 }

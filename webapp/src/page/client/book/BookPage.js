@@ -140,7 +140,7 @@ function getSteps() {
 }
 
 export const defaultStaff = {id: -1, firstName: "Any available staff"};
-const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines"));
+const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines")) || [];
 const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
 
 export default function BookPage({}) {
@@ -166,7 +166,7 @@ export default function BookPage({}) {
 
     useEffect(() => {
         localStorage.setItem("appointmentLines", JSON.stringify(appointmentLines));
-        if (appointmentLines.length === 0) {
+        if (!appointmentLines || appointmentLines.length === 0) {
             setActiveStep(0);
         }
     }, [appointmentLines]);
@@ -228,7 +228,7 @@ export default function BookPage({}) {
                         color="primary"
                         onClick={handleNext}
                         className={classes.button}
-                        disabled={appointmentLines.length === 0}
+                        disabled={!appointmentLines || appointmentLines.length === 0}
                     >
                         {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                     </Button>

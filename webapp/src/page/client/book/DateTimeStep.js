@@ -101,7 +101,7 @@ export default function DateTimeStep({appointmentLines}) {
             return;
         }
         
-        const firstAvailable = availabilities[0];
+        const firstAvailable = availabilities.find(x => !x.noAvailability);
         setSelectedDateAvailability(firstAvailable);
         setDate(parseISO(firstAvailable.date));
     }

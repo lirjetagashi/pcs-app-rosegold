@@ -58,7 +58,7 @@ const useStyle = makeStyles(theme => ({
 export default function AppointmentSummary({appointmentLines, onRemove}) {
 
     const classes = useStyle();
-    const services = appointmentLines.map(x => x.service);
+    const services = appointmentLines?.map(x => x.service) || [];
     const durationInMinutes = services.map(x => x.durationInMinutes).reduce((a, b) => a + b, 0);
     const duration = intervalToDuration({start: 0, end: durationInMinutes * 60 * 1000});
     const formattedDuration = duration.hours === 0 ? `${duration.minutes} min` : `${duration.hours} hr ${duration.minutes} min`
@@ -73,7 +73,7 @@ export default function AppointmentSummary({appointmentLines, onRemove}) {
             <Divider className={classes.divider} variant="middle"/>
             <SimpleBar className={classes.list}>
                 <List>
-                    {appointmentLines.map((appointmentLine, i) => (
+                    {appointmentLines?.map((appointmentLine, i) => (
                         <React.Fragment key={i}>
                             <ListItem>
                                 <ListItemAvatar>
