@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 const userService = new UserService();
 
 
-export default function SignUpPage() {
+export default function SignUpPage({onSuccess, hideSignInLink}) {
     const classes = useStyles();
     let navigate = useNavigate();
     const {setUser} = useUser();
@@ -81,7 +81,7 @@ export default function SignUpPage() {
         user => userService.create(user), {
             onSuccess: data => {
                 setUser(data);
-                navigate('/home');
+                !!onSuccess ? onSuccess() : navigate("/home");
             }
         });
 
@@ -305,11 +305,11 @@ export default function SignUpPage() {
                     Sign Up
                 </Button>
                 <Grid container justifyContent="flex-end">
-                    <Grid item>
+                    {!hideSignInLink && <Grid item>
                         <Link variant="body2" component={RouterLink} to="/sign-in">
                             Already have an account? Sign in
                         </Link>
-                    </Grid>
+                    </Grid>}
                 </Grid>
             </div>
         </Container>

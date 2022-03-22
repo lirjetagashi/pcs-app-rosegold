@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 
 const userService = new UserService();
 
-export default function SignInPage() {
+export default function SignInPage({onSuccess, hideSignUpLink}) {
     const classes = useStyles();
     const {setUser} = useUser();
     const navigate = useNavigate();
@@ -51,8 +51,8 @@ export default function SignInPage() {
     // useMutation when we need to use it for example when clicking a button
     const {mutate, isLoading, error} = useMutation(QueryKeys.USER_BY_EMAIL(userAccount.email), (user) => userService.logIn(user), {
         onSuccess: data => {
-            setUser(data)
-            navigate('/home')
+            setUser(data);
+            !!onSuccess ? onSuccess() : navigate("/home");
         }
     });
 
@@ -121,16 +121,13 @@ export default function SignInPage() {
                     Sign In
                 </Button>
                 <Grid container>
-                    <Grid item xs>
-                        <Link href="#" variant="body2">
-                            Forgot password?
-                        </Link>
-                    </Grid>
-                    <Grid item>
-                        <Link href="#" variant="body2" to="/sign-up" component={RouterLink}>
-                            Don't have an account? Sign Up
-                        </Link>
-                    </Grid>
+                    {!hideSignUpLink &&
+                        <Grid item>
+                            <Link href="#" variant="body2" to="/sign-up" component={RouterLink}>
+                                Don't have an account? Sign Up
+                            </Link>
+                        </Grid>
+                    }
                 </Grid>
             </div>
         </Container>

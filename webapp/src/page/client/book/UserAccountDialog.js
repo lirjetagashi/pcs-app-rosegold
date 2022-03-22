@@ -1,12 +1,27 @@
-import Button from "@material-ui/core/Button";
 import React from "react";
-import {useTheme} from "@material-ui/core/styles";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery} from "@material-ui/core";
+import {makeStyles, useTheme} from "@material-ui/core/styles";
+import {AppBar, Dialog, useMediaQuery} from "@material-ui/core";
 import SignInPage from "../../SignInPage";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import SignUpPage from "../../SignUpPage";
+import TabPanel from "../../../component/TabPanel";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        padding: theme.spacing(0, 4, 4, 4),
+    }
+}));
 
 export default function UserAccountDialog({open, setOpen}) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+    const classes = useStyles();
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const handleClose = () => {
         setOpen(false);
@@ -19,15 +34,24 @@ export default function UserAccountDialog({open, setOpen}) {
             onClose={handleClose}
             aria-labelledby="responsive-dialog-title"
         >
-                <SignInPage/>
-            {/*<DialogActions>
-                    <Button autoFocus onClick={handleClose}>
-                        Disagree
-                    </Button>
-                    <Button onClick={handleClose} autoFocus>
-                        Agree
-                    </Button>
-                </DialogActions>*/}
+            <AppBar position="static" color="default" className={classes.root}>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered
+                >
+                    <Tab label="Sign In"/>
+                    <Tab label="Sign Up"/>
+                </Tabs>
+                <TabPanel value={value} index={0}>
+                    <SignInPage hideSignUpLink onSuccess={() => setOpen(false)}/>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <SignUpPage hideSignInLink onSuccess={() => setOpen(false)}/>
+                </TabPanel>
+            </AppBar>
         </Dialog>
     );
 }
