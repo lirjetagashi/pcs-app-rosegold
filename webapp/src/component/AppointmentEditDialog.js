@@ -95,8 +95,6 @@ export default function AppointmentEditDialog({appointment, setAppointment, open
         },
     ];
 
-    console.log("Errors: ", errorRef.current);
-
     function handleSave() {
         return updateAppointment(appointment);
     }

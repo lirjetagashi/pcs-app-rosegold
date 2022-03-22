@@ -28,7 +28,7 @@ export const SelectTableCell = (props, errorRef, menuItems, equalOn) => {
         onChange={e => props.onChange(e.target.value)}
         label={props.columnDef.title}
     >
-        {menuItems.map((item) => <MenuItem key={item.value} value={item.value}>{item.label}</MenuItem>)}
+        {menuItems.map((item, i) => <MenuItem key={i} value={item.value}>{item.label}</MenuItem>)}
     </ValidTextField>
 }
 

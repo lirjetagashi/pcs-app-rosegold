@@ -39,8 +39,8 @@ export default function AppointmentList({data, loading, moveLabel, onMoveClick, 
     return (
         <Grid container justifyContent="center" className={classes.root}>
             {Object.entries(finalData).map(([date, appointments], i) => (
-                <>
-                    <Grid key={date + i} item xs={12}>
+                <React.Fragment key={date + i}>
+                    <Grid item xs={12}>
                         {i > 0 && <Divider/>}
                         {date === 'null' ? <Skeleton width="5%"/> :
                             <Typography className={classes.dateTypography} variant="h6" component="span">{format(parseISO(date), "MMM d")}</Typography>}
@@ -62,7 +62,7 @@ export default function AppointmentList({data, loading, moveLabel, onMoveClick, 
                                 <Skeleton variant="rect" height={"10em"}/>
                             </Box>
                     ))}
-                </>
+                </React.Fragment>
             ))}
         </Grid>
     );
