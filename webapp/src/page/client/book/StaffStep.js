@@ -7,6 +7,7 @@ import {QueryKeys} from "../../../service/QueryKeys";
 import {makeStyles} from "@material-ui/core/styles";
 import SimpleBar from "simplebar-react";
 import Box from "@material-ui/core/Box";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -32,6 +33,7 @@ export default function StaffStep({appointmentLines, onStaffChange}) {
 
     return (
         <SimpleBar className={classes.scrollBar} >
+            <Typography variant="h6" style={{paddingLeft: "1em"}}>Please choose staff from the dropdown:</Typography>
             <Box display="flex" flexWrap="wrap" className={classes.root}>
                 {appointmentLines.map((al, i) => (
                     <div key={i}>

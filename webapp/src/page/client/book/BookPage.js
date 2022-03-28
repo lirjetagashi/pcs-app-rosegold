@@ -6,7 +6,6 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import ServiceStep from "./ServiceStep";
 import Box from "@material-ui/core/Box";
-import SettingsIcon from '@material-ui/icons/Settings';
 import PersonIcon from '@material-ui/icons/Person';
 import DateIcon from '@material-ui/icons/Today';
 import clsx from "clsx";
@@ -17,6 +16,7 @@ import StaffStep from "./StaffStep";
 import DateTimeStep from "./DateTimeStep";
 import useUser from "../../../hooks/useUser";
 import UserAccountDialog from "./UserAccountDialog";
+import SpaIcon from '@material-ui/icons/Spa';
 
 const CustomStepConnector = withStyles({
     alternativeLabel: {
@@ -70,7 +70,7 @@ function StepIcon(props) {
     const {active, completed} = props;
 
     const icons = {
-        1: <SettingsIcon/>,
+        1: <SpaIcon/>,
         2: <PersonIcon/>,
         3: <DateIcon/>,
     };
@@ -141,7 +141,7 @@ function getSteps() {
     return ['Service', 'Staff', 'Date and time'];
 }
 
-export const defaultStaff = {id: -1, firstName: "Any available staff"};
+export const defaultStaff = {id: -1, firstName: "Any available staff (default)"};
 const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines")) || [];
 const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
 
