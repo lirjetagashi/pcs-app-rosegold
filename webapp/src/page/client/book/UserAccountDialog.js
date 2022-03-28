@@ -27,6 +27,10 @@ export default function UserAccountDialog({open, setOpen}) {
         setOpen(false);
     };
 
+    function handleOnSuccess() {
+        setOpen(false);
+    }
+
     return (
         <Dialog
             fullScreen={fullScreen}
@@ -46,10 +50,10 @@ export default function UserAccountDialog({open, setOpen}) {
                     <Tab label="Sign Up"/>
                 </Tabs>
                 <TabPanel value={value} index={0}>
-                    <SignInPage hideSignUpLink onSuccess={() => setOpen(false)}/>
+                    <SignInPage hideSignUpLink onSuccess={handleOnSuccess}/>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <SignUpPage hideSignInLink onSuccess={() => setOpen(false)}/>
+                    <SignUpPage hideSignInLink onSuccess={handleOnSuccess}/>
                 </TabPanel>
             </AppBar>
         </Dialog>

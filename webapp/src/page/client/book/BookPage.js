@@ -149,6 +149,7 @@ export default function BookPage({}) {
 
     const classes = useStyles();
     const dateTime = useRef();
+    const {user, setUser} = useUser();
     const [open, setOpen] = useState(false);
     const [activeStep, setActiveStep] = useState(initialActiveStep);
     const [appointmentLines, setAppointmentLines] = useState(initialAppointmentLines);
@@ -254,7 +255,7 @@ export default function BookPage({}) {
                 </Paper>
             </div>
         </Box>
-            {open && <UserAccountDialog open={open} setOpen={setOpen}/>}
+            {!user && <UserAccountDialog open={open} setOpen={setOpen}/>}
         </>
     );
 }
