@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
 
 const categoryService = new CategoryService();
 
-export default function ServiceStep({onAdd, appointmentLines}) {
+export default function ServiceStep({onAdd, appointmentLines, hideAddButton}) {
     const classes = useStyles();
     const [value, setValue] = useState(0);
     const {data} = useQuery(QueryKeys.CATEGORIES, () => categoryService.findAll())
@@ -93,7 +93,8 @@ export default function ServiceStep({onAdd, appointmentLines}) {
                                                  service={service}
                                                  onAdd={onAdd}
                                                  disabled={!!selectedAppointmentLine}
-                                                 order={selectedAppointmentLine?.order}/>
+                                                 order={selectedAppointmentLine?.order}
+                                                 hideAddButton={hideAddButton}/>
                                 </Grid>)
                             }
                         )}
