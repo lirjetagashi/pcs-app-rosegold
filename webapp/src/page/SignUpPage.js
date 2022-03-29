@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
 const userService = new UserService();
 
 
-export default function SignUpPage({onSuccess, hideSignInLink}) {
+export default function SignUpPage({onSuccess, hideSignInLink, isLoading}) {
     const classes = useStyles();
     let navigate = useNavigate();
     const {setUser} = useUser();
@@ -77,11 +77,11 @@ export default function SignUpPage({onSuccess, hideSignInLink}) {
     });
 
     // use this to insert data to database
-    const {mutate: createUser, isLoading, error} = useMutation(QueryKeys.USER_BY_EMAIL(userAccount.email),
+    const {mutate: createUser, isLoading: signUpLoading, error} = useMutation(QueryKeys.USER_BY_EMAIL(userAccount.email),
         user => userService.create(user), {
             onSuccess: data => {
                 setUser(data);
-                !!onSuccess ? onSuccess() : navigate("/home");
+                !!onSuccess ? onSuccess(data) : navigate("/home");
             }
         });
 
@@ -300,7 +300,7 @@ export default function SignUpPage({onSuccess, hideSignInLink}) {
                     color="primary"
                     className={classes.submit}
                     onClick={handleSubmit}
-                    disabled={isLoading}
+                    disabled={isLoading || signUpLoading}
                 >
                     Sign Up
                 </Button>

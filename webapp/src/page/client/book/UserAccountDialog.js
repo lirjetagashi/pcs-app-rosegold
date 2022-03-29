@@ -6,6 +6,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import SignUpPage from "../../SignUpPage";
 import TabPanel from "../../../component/TabPanel";
+import {useNavigate} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -13,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function UserAccountDialog({open, setOpen}) {
+export default function UserAccountDialog({open, setOpen, onSuccess, isLoading}) {
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
     const classes = useStyles();
@@ -27,8 +28,9 @@ export default function UserAccountDialog({open, setOpen}) {
         setOpen(false);
     };
 
-    function handleOnSuccess() {
+    function handleOnSuccess(user) {
         setOpen(false);
+        onSuccess(user);
     }
 
     return (
@@ -50,10 +52,10 @@ export default function UserAccountDialog({open, setOpen}) {
                     <Tab label="Sign Up"/>
                 </Tabs>
                 <TabPanel value={value} index={0}>
-                    <SignInPage hideSignUpLink onSuccess={handleOnSuccess}/>
+                    <SignInPage hideSignUpLink onSuccess={handleOnSuccess} isLoading={isLoading}/>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <SignUpPage hideSignInLink onSuccess={handleOnSuccess}/>
+                    <SignUpPage hideSignInLink onSuccess={handleOnSuccess} isLoading={isLoading}/>
                 </TabPanel>
             </AppBar>
         </Dialog>

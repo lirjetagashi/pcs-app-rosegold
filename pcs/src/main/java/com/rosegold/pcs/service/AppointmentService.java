@@ -1,25 +1,44 @@
 package com.rosegold.pcs.service;
 
 import com.rosegold.pcs.entity.Appointment;
+import com.rosegold.pcs.entity.Employee;
 import com.rosegold.pcs.entity.StatusType;
+import com.rosegold.pcs.payload.AppointmentReservation;
 import com.rosegold.pcs.repository.AppointmentRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.Function;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Service
-public class AppointmentService extends BasicServiceOperations<AppointmentRepository, Appointment>{
+public class AppointmentService extends BasicServiceOperations<AppointmentRepository, Appointment> {
 
-  public AppointmentService(AppointmentRepository repository) {
+  private final AvailabilityService availabilityService;
+
+  public AppointmentService(AppointmentRepository repository, @Lazy AvailabilityService availabilityService) {
     super(repository);
+    this.availabilityService = availabilityService;
+  }
+
+  @Override
+  public Appointment save(Appointment entity) {
+    entity.getAppointmentLines().forEach(al -> {
+      if (al.getEmployee().getId() == -1) {
+        List<Employee> availableEmployees = availabilityService.getAvailableEmployees(entity.getDateTime().toLocalDate(), AppointmentReservation.from(entity, al), al);
+        al.setEmployee(availableEmployees.get(ThreadLocalRandom.current().nextInt(0, availableEmployees.size()))); // Select random employee
+      }
+    });
+
+    return super.save(entity);
   }
 
   public Appointment moveToProgress(Appointment appointment) {
@@ -47,7 +66,7 @@ public class AppointmentService extends BasicServiceOperations<AppointmentReposi
   }
 
   public List<Appointment> findAllAfterByEmployeeIds(LocalDateTime dateTime, Set<Long> employeeIds) {
-    return repository.findByDateTimeIsAfterAndAppointmentLines_Employee_IdIn(dateTime, employeeIds);
+    return repository.findByDateTimeIsAfterAndStatusAndAppointmentLines_Employee_IdIn(dateTime, StatusType.PENDING, employeeIds);
   }
 
 }

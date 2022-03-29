@@ -18,8 +18,12 @@ public class EmployeeService extends BasicServiceOperations<EmployeeRepository, 
     super(repository);
   }
 
-  public List<Employee> findAllByIdsOrCategoryIds(Set<Long> ids, Set<Long> categoryIds) {
+  public Set<Employee> findAllByIdsOrCategoryIds(Set<Long> ids, Set<Long> categoryIds) {
     return repository.findAllByIdInOrCategories_IdIn(ids, categoryIds);
+  }
+
+  public Set<Employee> findAllByCategoryId(Long categoryId) {
+    return repository.findAllByCategories_Id(categoryId);
   }
 
   @Override

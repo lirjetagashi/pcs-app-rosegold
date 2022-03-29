@@ -3,6 +3,7 @@ package com.rosegold.pcs.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -17,6 +18,7 @@ public class Category extends BaseEntity {
   @NotBlank
   private String name;
 
+  @ToString.Exclude
   @JsonIgnoreProperties("category")
   @OneToMany(mappedBy = "category")
   private List<Service> services;

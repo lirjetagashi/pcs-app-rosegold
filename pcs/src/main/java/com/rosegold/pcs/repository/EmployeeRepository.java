@@ -8,6 +8,8 @@ import java.util.Set;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    List<Employee> findAllByIdInOrCategories_IdIn(Set<Long> employeeIds, Set<Long> categories);
+    Set<Employee> findAllByIdInOrCategories_IdIn(Set<Long> employeeIds, Set<Long> categories);
+
+    Set<Employee> findAllByCategories_Id(Long categoryId);
 
 }

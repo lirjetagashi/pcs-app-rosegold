@@ -10,7 +10,7 @@ import {useMutation} from "react-query";
 import {QueryKeys} from "../../../service/QueryKeys";
 import {getISODate} from "../../../utils/Utils";
 import SimpleBar from "simplebar-react";
-import {parse, parseISO} from "date-fns";
+import {parseISO} from "date-fns";
 
 const useStyles = makeStyles(theme => ({
     root: {

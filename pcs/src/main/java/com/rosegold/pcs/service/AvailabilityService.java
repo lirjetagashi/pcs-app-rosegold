@@ -30,7 +30,7 @@ public class AvailabilityService {
     private final AppointmentService appointmentService;
     private final EmployeeService employeeService;
 
-    public Collection<Availability> getAvailableDates(List<AppointmentLine> appointmentLines) {
+    public List<Availability> getAvailableDates(List<AppointmentLine> appointmentLines) {
         Set<Long> employeeIds = appointmentLines.stream()
                 .map(AppointmentLine::getEmployee)
                 .map(BaseEntity::getId)
@@ -40,7 +40,7 @@ public class AvailabilityService {
                 .map(Service::getCategory)
                 .map(BaseEntity::getId)
                 .collect(Collectors.toSet());
-        List<Employee> selectedEmployees = employeeService.findAllByIdsOrCategoryIds(employeeIds, categoryIds);
+        Set<Employee> selectedEmployees = employeeService.findAllByIdsOrCategoryIds(employeeIds, categoryIds);
         List<Appointment> appointments = appointmentService.findAllAfterByEmployeeIds(LocalDateTime.now(), selectedEmployees.stream().map(BaseEntity::getId).collect(Collectors.toSet()));
 
         LocalDate maxReservationDate = LocalDate.now().plusMonths(MAX_RESERVATION_MONTHS);
@@ -50,9 +50,26 @@ public class AvailabilityService {
         Map<LocalDate, Availability> availabilityByDate = getAvailabilityByDate(appointmentLines, availabilityByEmployeeId, employeesByCategoryId);
 
         return availabilityByDate.values()
-            .stream()
-            .sorted()
-            .collect(Collectors.toList());
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public List<Employee> getAvailableEmployees(LocalDate date, AppointmentReservation appointmentReservation, AppointmentLine appointmentLine) {
+        Set<Employee> skilledEmployees = employeeService.findAllByCategoryId(appointmentLine.getService().getCategory().getId());
+        List<Appointment> appointments = appointmentService.findAllAfterByEmployeeIds(date.atStartOfDay(), skilledEmployees.stream().map(BaseEntity::getId).collect(Collectors.toSet()));
+
+        LocalDate maxReservationDate = LocalDate.now().plusMonths(MAX_RESERVATION_MONTHS);
+        Map<Long, StaffAvailability> availabilityByEmployeeId = getAvailabilityByEmployeeId(appointments, maxReservationDate);
+        skilledEmployees.forEach(emp -> availabilityByEmployeeId.putIfAbsent(emp.getId(), new StaffAvailability(maxReservationDate, null, TIME_FRAME, emp)));
+
+        return availabilityByEmployeeId.values()
+                .stream()
+                .filter(x -> x.getAvailability()
+                        .stream()
+                        .anyMatch(a -> !a.isNoAvailability() && a.getDate().equals(date) && a.getAvailableByTime().get(appointmentReservation.getFrom().toLocalTime()) && a.getAvailableByTime().get(appointmentReservation.getTo().toLocalTime())))
+                .map(StaffAvailability::getEmployee)
+                .collect(Collectors.toList());
     }
 
     private Map<LocalDate, Availability> getAvailabilityByDate(List<AppointmentLine> appointmentLines, Map<Long, StaffAvailability> availabilityByEmployeeId, Map<Long, List<Employee>> employeesByCategoryId) {
@@ -75,7 +92,7 @@ public class AvailabilityService {
         return availabilitiesByDate;
     }
 
-    private Map<Long, List<Employee>> getEmployeesByCategoryId(Set<Long> categoryIds, List<Employee> selectedEmployees) {
+    private Map<Long, List<Employee>> getEmployeesByCategoryId(Set<Long> categoryIds, Set<Employee> selectedEmployees) {
         return categoryIds.stream()
                 .collect(
                         Collectors.toMap(x -> x, x -> selectedEmployees.stream()
@@ -86,21 +103,14 @@ public class AvailabilityService {
 
     private Map<Long, StaffAvailability> getAvailabilityByEmployeeId(List<Appointment> appointments, LocalDate maxReservationDate) {
         Map<Long, StaffAvailability> availabilityByEmployeeId = new HashMap<>();
-        appointments.forEach(appointment -> {
-            LocalDateTime appointmentDateTime = appointment.getDateTime();
-            appointment.getAppointmentLines()
-                    .forEach(al -> {
-                        var reservedDuration = appointment.getAppointmentLines().stream()
-                                .limit(al.getOrder() - 1)
-                                .map(AppointmentLine::getService)
-                                .mapToInt(Service::getDurationInMinutes)
-                                .sum();
-                        var appointmentReservation = new AppointmentReservation(appointmentDateTime.plusMinutes(reservedDuration), appointmentDateTime.plusMinutes(al.getService().getDurationInMinutes()));
-                        var staffAvailability = new StaffAvailability(maxReservationDate, appointmentReservation, TIME_FRAME, al.getEmployee());
+        appointments.forEach(appointment ->
+                appointment.getAppointmentLines()
+                        .forEach(al -> {
+                            AppointmentReservation appointmentReservation = AppointmentReservation.from(appointment, al);
+                            var staffAvailability = new StaffAvailability(maxReservationDate, appointmentReservation, TIME_FRAME, al.getEmployee());
 
-                        availabilityByEmployeeId.merge(al.getId(), staffAvailability, StaffAvailability::merge);
-                    });
-        });
+                            availabilityByEmployeeId.merge(al.getEmployee().getId(), staffAvailability, StaffAvailability::merge);
+                        }));
 
         return availabilityByEmployeeId;
     }

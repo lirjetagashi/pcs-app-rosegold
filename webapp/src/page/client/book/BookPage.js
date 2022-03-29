@@ -10,7 +10,7 @@ import PersonIcon from '@material-ui/icons/Person';
 import DateIcon from '@material-ui/icons/Today';
 import clsx from "clsx";
 import {Paper, StepConnector, withStyles} from "@material-ui/core";
-import PropTypes, {func} from "prop-types";
+import PropTypes from "prop-types";
 import AppointmentSummary from "./AppointmentSummary";
 import StaffStep from "./StaffStep";
 import DateTimeStep from "./DateTimeStep";
@@ -19,7 +19,7 @@ import UserAccountDialog from "./UserAccountDialog";
 import SpaIcon from '@material-ui/icons/Spa';
 import {useMutation} from "react-query";
 import {AppointmentService} from "../../../service/AppointmentService";
-import {formatCurrency} from "../../../utils/Utils";
+import {useNavigate} from "react-router-dom";
 
 const CustomStepConnector = withStyles({
     alternativeLabel: {
@@ -153,16 +153,17 @@ export default function BookPage({}) {
 
     const classes = useStyles();
     const dateTime = useRef();
-    const {user, setUser} = useUser();
+    const {user} = useUser();
     const [open, setOpen] = useState(false);
     const [activeStep, setActiveStep] = useState(initialActiveStep);
     const [appointmentLines, setAppointmentLines] = useState(initialAppointmentLines);
+    const navigate = useNavigate();
     const steps = getSteps();
     const isLastStep = activeStep === steps.length - 1;
     const services = appointmentLines?.map(x => x.service) || [];
     const total = services.map(x => x.price).reduce((a, b) => a + b, 0);
 
-    const {mutateAsync: createAppointment} = useMutation(appointment => appointmentService.create(appointment));
+    const {mutateAsync: createAppointment, isLoading} = useMutation(appointment => appointmentService.create(appointment));
 
     function getStepContent(step) {
         switch (step) {
@@ -216,10 +217,15 @@ export default function BookPage({}) {
     }
 
     function handleFinish() {
-        if(!user) {
+        if (!user) {
             setOpen(true);
+            return;
         }
 
+        return saveAppointment(user);
+    }
+
+    function saveAppointment(user) {
         const appointment = {
             status: 'PENDING',
             dateTime: dateTime.current,
@@ -229,7 +235,11 @@ export default function BookPage({}) {
         }
 
         console.log("Appointment: ", appointment);
-        createAppointment(appointment);
+        return createAppointment(appointment)
+            .then(savedAppointment => {
+                console.log("SavedAppointment: ", savedAppointment);
+                navigate('./done', savedAppointment)
+            });
     }
 
     function handleBack() {
@@ -237,40 +247,41 @@ export default function BookPage({}) {
     }
 
     return (
-        <><Box display="flex" className={classes.root} flexWrap="wrap">
-            <Box display="flex" flexDirection="column" className={classes.leftPanel}>
-                <Paper variant="outlined" className={classes.stepper}>
-                    <Stepper activeStep={activeStep} connector={<CustomStepConnector/>}>
-                        {steps.map((label, index) => (
-                            <Step key={label}>
-                                <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                </Paper>
-                <Paper variant="outlined" className={classes.content}>{getStepContent(activeStep)}</Paper>
-                <div className={classes.stepButtons}>
-                    <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                        Back
-                    </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={isLastStep ? handleFinish : handleNext}
-                        className={classes.button}
-                        disabled={!appointmentLines || appointmentLines.length === 0}
-                    >
-                        {isLastStep ? 'Finish' : 'Next'}
-                    </Button>
+        <>
+            <Box display="flex" className={classes.root} flexWrap="wrap">
+                <Box display="flex" flexDirection="column" className={classes.leftPanel}>
+                    <Paper variant="outlined" className={classes.stepper}>
+                        <Stepper activeStep={activeStep} connector={<CustomStepConnector/>}>
+                            {steps.map((label, index) => (
+                                <Step key={label}>
+                                    <StepLabel StepIconComponent={StepIcon}>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                    </Paper>
+                    <Paper variant="outlined" className={classes.content}>{getStepContent(activeStep)}</Paper>
+                    <div className={classes.stepButtons}>
+                        <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
+                            Back
+                        </Button>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={isLastStep ? handleFinish : handleNext}
+                            className={classes.button}
+                            disabled={!appointmentLines || appointmentLines.length === 0}
+                        >
+                            {isLastStep ? 'Finish' : 'Next'}
+                        </Button>
+                    </div>
+                </Box>
+                <div className={classes.rightPanel}>
+                    <Paper variant="outlined">
+                        <AppointmentSummary appointmentLines={appointmentLines} onRemove={removeService}/>
+                    </Paper>
                 </div>
             </Box>
-            <div className={classes.rightPanel}>
-                <Paper variant="outlined">
-                    <AppointmentSummary appointmentLines={appointmentLines} onRemove={removeService}/>
-                </Paper>
-            </div>
-        </Box>
-            <UserAccountDialog open={open} setOpen={setOpen}/>
+            <UserAccountDialog open={open} setOpen={setOpen} onSuccess={saveAppointment} isLoading={isLoading}/>
         </>
     );
 }

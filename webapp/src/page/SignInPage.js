@@ -16,6 +16,7 @@ import {QueryKeys} from "../service/QueryKeys";
 import {UserService} from "../service/UserService";
 import useUser from "../hooks/useUser";
 import ValidTextField from "../component/ValidTextField";
+import LoadingButton from "../component/LoadingButton";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 const userService = new UserService();
 
-export default function SignInPage({onSuccess, hideSignUpLink}) {
+export default function SignInPage({onSuccess, hideSignUpLink, isLoading}) {
     const classes = useStyles();
     const {setUser} = useUser();
     const navigate = useNavigate();
@@ -49,10 +50,10 @@ export default function SignInPage({onSuccess, hideSignUpLink}) {
     });
 
     // useMutation when we need to use it for example when clicking a button
-    const {mutate, isLoading, error} = useMutation(QueryKeys.USER_BY_EMAIL(userAccount.email), (user) => userService.logIn(user), {
+    const {mutate, isLoading: signInLoading, error} = useMutation(QueryKeys.USER_BY_EMAIL(userAccount.email), (user) => userService.logIn(user), {
         onSuccess: data => {
             setUser(data);
-            !!onSuccess ? onSuccess() : navigate("/home");
+            !!onSuccess ? onSuccess(data) : navigate("/home");
         }
     });
 
@@ -109,17 +110,17 @@ export default function SignInPage({onSuccess, hideSignUpLink}) {
                     control={<Checkbox value="remember" color="primary"/>}
                     label="Remember me"
                 />
-                <Button
+                <LoadingButton
                     type="submit"
                     fullWidth
                     variant="contained"
                     color="primary"
                     className={classes.submit}
                     onClick={handleLogin}
-                    disabled={isLoading}
+                    loading={isLoading || signInLoading}
                 >
                     Sign In
-                </Button>
+                </LoadingButton>
                 <Grid container>
                     {!hideSignUpLink &&
                         <Grid item>
