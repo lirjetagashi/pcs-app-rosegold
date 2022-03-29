@@ -27,7 +27,7 @@ const periods = [
     {label: "This Quarter", from: () => startOfQuarter(new Date()), to: () => endOfQuarter(new Date())}
 ]
 const customPeriod = periods[0];
-const initialPeriod = periods[1];
+const initialPeriod = periods[2];
 
 export default function DateFilter({rangeRef}) {
 

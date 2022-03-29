@@ -11,8 +11,6 @@ import InProgressIcon from '@material-ui/icons/HourglassEmptyOutlined';
 import CompletedIcon from '@material-ui/icons/CheckCircleOutlineOutlined';
 import {format} from "date-fns";
 import AppointmentTab from "../../component/AppointmentTab";
-import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery} from "@material-ui/core";
-import Button from "@material-ui/core/Button";
 import AppointmentEditDialog from "../../component/AppointmentEditDialog";
 
 function a11yProps(index) {

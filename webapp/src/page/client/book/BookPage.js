@@ -17,6 +17,9 @@ import DateTimeStep from "./DateTimeStep";
 import useUser from "../../../hooks/useUser";
 import UserAccountDialog from "./UserAccountDialog";
 import SpaIcon from '@material-ui/icons/Spa';
+import {useMutation} from "react-query";
+import {AppointmentService} from "../../../service/AppointmentService";
+import {formatCurrency} from "../../../utils/Utils";
 
 const CustomStepConnector = withStyles({
     alternativeLabel: {
@@ -144,6 +147,7 @@ function getSteps() {
 export const defaultStaff = {id: -1, firstName: "Any available staff (default)"};
 const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines")) || [];
 const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
+const appointmentService = new AppointmentService();
 
 export default function BookPage({}) {
 
@@ -155,6 +159,10 @@ export default function BookPage({}) {
     const [appointmentLines, setAppointmentLines] = useState(initialAppointmentLines);
     const steps = getSteps();
     const isLastStep = activeStep === steps.length - 1;
+    const services = appointmentLines?.map(x => x.service) || [];
+    const total = services.map(x => x.price).reduce((a, b) => a + b, 0);
+
+    const {mutateAsync: createAppointment} = useMutation(appointment => appointmentService.create(appointment));
 
     function getStepContent(step) {
         switch (step) {
@@ -208,13 +216,20 @@ export default function BookPage({}) {
     }
 
     function handleFinish() {
-        const appointment = {
-            dateTime: dateTime.current,
-            appointmentLines: appointmentLines
+        if(!user) {
+            setOpen(true);
         }
 
-        setOpen(true);
+        const appointment = {
+            status: 'PENDING',
+            dateTime: dateTime.current,
+            total: total,
+            appointmentLines: appointmentLines,
+            user: user
+        }
+
         console.log("Appointment: ", appointment);
+        createAppointment(appointment);
     }
 
     function handleBack() {
@@ -255,7 +270,7 @@ export default function BookPage({}) {
                 </Paper>
             </div>
         </Box>
-            {!user && <UserAccountDialog open={open} setOpen={setOpen}/>}
+            <UserAccountDialog open={open} setOpen={setOpen}/>
         </>
     );
 }
