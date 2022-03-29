@@ -145,11 +145,12 @@ function getSteps() {
 }
 
 export const defaultStaff = {id: -1, firstName: "Any available staff (default)"};
-const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines")) || [];
-const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
 const appointmentService = new AppointmentService();
 
 export default function BookPage({}) {
+
+    const initialAppointmentLines = JSON.parse(localStorage.getItem("appointmentLines")) || [];
+    const initialActiveStep = Number(localStorage.getItem("appointmentStep") || "0");
 
     const classes = useStyles();
     const dateTime = useRef();
@@ -238,7 +239,9 @@ export default function BookPage({}) {
         return createAppointment(appointment)
             .then(savedAppointment => {
                 console.log("SavedAppointment: ", savedAppointment);
-                navigate('./done', savedAppointment)
+                localStorage.removeItem("appointmentStep");
+                localStorage.removeItem("appointmentLines");
+                navigate('./done', savedAppointment);
             });
     }
 
