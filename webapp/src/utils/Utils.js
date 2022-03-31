@@ -16,7 +16,7 @@ export function getTime(date) {
 
 const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'EUR',
+    currency: 'CAD',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
 });
