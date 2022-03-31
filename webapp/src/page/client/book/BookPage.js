@@ -273,6 +273,7 @@ export default function BookPage({}) {
                             onClick={isLastStep ? handleFinish : handleNext}
                             className={classes.button}
                             disabled={!appointmentLines || appointmentLines.length === 0}
+                            size={"large"}
                         >
                             {isLastStep ? 'Finish' : 'Next'}
                         </Button>
