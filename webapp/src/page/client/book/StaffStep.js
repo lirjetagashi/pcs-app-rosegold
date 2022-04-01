@@ -33,8 +33,10 @@ export default function StaffStep({appointmentLines, onStaffChange}) {
 
     return (
         <SimpleBar className={classes.scrollBar} >
-            <Typography variant="h6" style={{paddingLeft: "1em"}}>Please choose staff from the dropdown:</Typography>
-            <Box display="flex" flexWrap="wrap" className={classes.root}>
+            <Box display={"flex"} justifyContent={"center"} style={{margin: "2em"}}>
+                <Typography variant="h6">Please choose staff from the dropdown:</Typography>
+            </Box>
+            <Box display="flex" justifyContent={"center"} flexWrap="wrap" className={classes.root}>
                 {appointmentLines.map((al, i) => (
                     <div key={i}>
                         <StaffServiceTile appointmentLine={al} employees={data} onStaffChange={onStaffChange}/>

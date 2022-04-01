@@ -25,6 +25,7 @@ const useStyles = makeStyles(theme => ({
         borderBottomLeftRadius: "30px",
         borderTop: 0,
         borderRight: 0,
+        color: theme.palette.success.main
     }
 }));
 
@@ -41,7 +42,7 @@ export default function ServiceTile({category, service, onAdd, disabled, order, 
             </div>
             <div>
                 {hideAddButton ?(<div></div>) :
-                                (<Button variant="outlined" color="secondary" style={{float: "right"}} onClick={() => onAdd(category, service)} disabled={disabled}>{order || "Add"}</Button>)}
+                                (<Button variant="outlined" size={"large"} color="secondary" style={{float: "right"}} onClick={() => onAdd(category, service)} disabled={disabled}>{order || "Add"}</Button>)}
 
             </div>
         </Card>
